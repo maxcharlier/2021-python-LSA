@@ -16,7 +16,7 @@ class Anchor(Node):
         self.childrens = []
         # Define node in the routing tree
         self.parent = None
-        self.parent_w = 0
+        self.current_weight = 0
         self.set_as_sink(False)
 
     def set_as_sink(self, sink):
@@ -31,6 +31,13 @@ class Anchor(Node):
             self.sink_distance = None
             self.path = []
 
+    def get_weight(self, parent):
+        if self.parent == parent:
+            return self.current_weight
+        else:
+            raise Exception("This parent do not exist " + str(parent))
+            return 0
+
     def set_parent(self, parent, weight):
         """
         :param parent: a node 
@@ -44,7 +51,7 @@ class Anchor(Node):
 
         #set the parents
         self.parent = parent
-        self.parent_w = weight
+        self.current_weight = weight
 
         parent.add_children(self)
 
@@ -74,17 +81,38 @@ class Anchor(Node):
             self.set_parent(node, 0)
             self.broadcast_rank()
 
-    def initialise_and_get_w(self):
-        """Tag start with the number of packet to send to anchors, anchors need to sum packet from children after the routing step."""
-        w =0 
-        for children in self.childrens:
-            if children.type == 'tag':
-                w += children.get_weight(self)
-            elif not children.sink:
-                w += children.initialise_and_get_w()
+    def send_packet(self, destination, agregate=1):
+        """
+        Send a packet to a neighboring node
+        :param destination: The destination node
+        """
+        destination.receive_packet(agregate)
+        self.current_weight -= agregate
 
-        self.parent_w = w
-        return w
+        self.update_Q(-agregate)
+
+        if self.current_weight < 0 :
+            raise Exception("The weight (number of message in the buffer) cannot be negative")
+
+    def receive_packet(self, agregate=1):
+        """
+        Receive a packet from a child
+        :param agregate: The size of the packet
+        """
+        self.current_weight += agregate
+
+    def initialise_Q(self):
+        """Tag start with the number of packet to send to anchors, anchors need to sum packet from children after the routing step."""
+        Q =0 
+        for children in self.childrens:
+
+            children.initialise_Q()
+            if children.type == 'tag':
+                Q += children.get_weight(self)
+            else: #anchor
+                Q += children.get_Q()
+
+        self.Q= Q
 
     def _path_through_node_shorter(self, node):
         """

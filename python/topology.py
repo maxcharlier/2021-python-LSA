@@ -4,7 +4,8 @@ from math import ceil
 from nodes.anchor import Anchor
 from nodes.tag import Tag
 from nodes.point import Point
-from graphics import plot_network, plot_network_routing, dot_network_routing
+import graphics
+import scheduling
 
 class Topology():
   def __init__(self, x, y, space, comm_range, disruption_range, R, nb_tag_loc):
@@ -131,7 +132,7 @@ class Topology():
     for sink in self.sinks:
       sink.broadcast_rank()
     for sink in self.sinks:
-      sink.initialise_and_get_w()
+      sink.initialise_Q()
 
   def export_connectivity(self, file):
     with open(file, 'w') as csvfile:
@@ -179,11 +180,15 @@ if __name__ == '__main__':
   topology = Topology(50, 50, 10, 15, 25, 1, 1)
   (anchors, tags) = topology.generate_nodes()
   topology.generate_neighbourhood(anchors, tags)
-  topology.set_sink(anchors[5])
-  topology.set_sink(anchors[15])
+  # topology.set_sink(anchors[5])
+  topology.set_sink(anchors[int(len(anchors)/2)])
   topology.set_nodes(anchors, tags)
   topology.generate_routing()
-  plot_network(topology.nodes, "./topology.pdf")
-  plot_network_routing(topology.nodes, "./plot_network_routing.pdf")
-  dot_network_routing(topology.nodes, "./dot_network_routing.dot")
-
+  graphics.plot_network(topology.nodes, "./example/topology.pdf")
+  graphics.plot_network_routing(topology.nodes, "./example/plot_network_routing.pdf")
+  graphics.plot_Q(topology.nodes, "./example/plot_Q.pdf")
+  graphics.dot_network_routing(topology.nodes, "./example/dot_network_routing.dot")
+  (schedule, duration) = scheduling.scheduling(topology, n_ch=6, agregation=5)
+  print("duration : " + str(duration))
+  scheduling.print_schedule(schedule)
+  print("len schedule " + str(len(schedule)))

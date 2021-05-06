@@ -4,6 +4,7 @@ from matplotlib.lines import Line2D
 from nodes.anchor import Anchor
 from nodes.tag import Tag
 from nodes.point import Point
+import os
 
 def plot_network(all_nodes, filepath):
     """
@@ -26,6 +27,34 @@ def plot_network(all_nodes, filepath):
         # plt.annotate(str(node.Q), (node.position.x, node.position.y), xytext=(0, 4),
         #              textcoords='offset points')
         plt.annotate(str(node.name), (node.position.x, node.position.y), xytext=(0, -8),
+                     textcoords='offset points')
+
+    legend_elements = [Line2D([0], [0], color='red', marker='o', label='mobile'),
+                       Line2D([0], [0], color='royalblue', marker='s', label='anchor (root)'),
+                       Line2D([0], [0], color='green', marker='s', label='anchor'),
+                       Line2D([0], [0], color='black', linewidth=1, label='physical link')]
+    plt.legend(handles=legend_elements)
+    plt.savefig(filepath)
+    plt.close()
+
+def plot_Q(all_nodes, filepath):
+    """
+    Create a graph representing the current network
+    :param all_nodes: All network nodes
+    :param filepath: The path to save the figure
+    """
+    for node in all_nodes:
+
+        if node.type == 'tag':
+            plt.plot(node.position.x, node.position.y, color='red', marker='o')
+        else:
+            if node.sink:
+                plt.plot(node.position.x, node.position.y, color='royalblue', marker='s')
+            else:
+                plt.plot(node.position.x, node.position.y, color='green', marker='s')
+        # plt.annotate(str(node.Q), (node.position.x, node.position.y), xytext=(0, 4),
+        #              textcoords='offset points')
+        plt.annotate(str(node.get_Q()), (node.position.x, node.position.y), xytext=(0, -8),
                      textcoords='offset points')
 
     legend_elements = [Line2D([0], [0], color='red', marker='o', label='mobile'),
@@ -119,26 +148,28 @@ def dot_network_routing(all_nodes, filepath):
 
     for node in all_nodes:
         if node.type == 'tag':
-            f.write(str(node.name) + " [label=\""+node.name+"\", shape=circle, pos = \""+str(node.position.x)+",-"+str(node.position.y)+"!\"] \n")
+            f.write(str(node.name) + " [label=\""+node.name+"\\n"+str(node.get_Q())+"\", shape=circle, pos = \""+str(node.position.x)+",-"+str(node.position.y)+"!\"] \n")
         else:
             if node.sink :
                 color = "red"
             else:
                 color = "black"
-            f.write(str(node.name) + " [label=\""+node.name+"\", shape=square, pos = \""+str(node.position.x)+",-"+str(node.position.y)+"!\", color = "+color+"] \n")
+            f.write(str(node.name) + " [label=\""+node.name+"\\n"+str(node.get_Q())+"\", shape=square, pos = \""+str(node.position.x)+",-"+str(node.position.y)+"!\", color = "+color+"] \n")
 
     for node in all_nodes:
 
 
         if node.type == 'tag':
             for i in range(len(node.parents)):
-                f.write(str(node.name) + " -> " + str(node.parents[i].name) + " [ label = \"" + str(node.parents_w[i])+"\"]\n")
+                f.write(str(node.name) + " -> " + str(node.parents[i].name) + " [ label = \"" + str(node.parents_w[i])+"\" fontcolor=\"blue\"]\n")
         elif node.parent != None:
             # plt.plot([node.position.x, node.parent.position.x], [node.position.y, node.parent.position.y], color='black',
             #              linewidth=0.5)
 
-            f.write(str(node.name) + " -> " + str(node.parent.name) + " [ label = \"" + str(node.parent_w)+"\"]\n")
+            f.write(str(node.name) + " -> " + str(node.parent.name) + " [ label = \"" + str(node.get_Q())+"\"fontcolor=\"red\"]\n")
 
     f.write("}")
 
     f.close()
+    command = "dot -Kfdp -n -Tpdf -Gdpi=300 -o "+filepath[0:-4]+".pdf "+filepath
+    os.system(command)  

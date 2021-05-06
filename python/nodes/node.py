@@ -1,5 +1,9 @@
 from abc import ABC
 from nodes.point import Point
+import sys 
+sys.path.append('..')
+
+from scheduling import Link
 
 class Node(ABC):
     def __init__(self, name, position, comm_range, disruption_range, type):
@@ -26,11 +30,18 @@ class Node(ABC):
         self.neighbours = []
         self.disrupted_nodes = []
         self.Q = 0
+        self.last_slot = -1
+        self.last_link = None
 
 
     def update_Q(self, offset):
         """Update the value of Q for the node and his parents"""
         self.Q = self.Q + offset
+    def get_Q(self):
+        return self.Q
+    def get_weight(self):
+        return self.current_weight
+
 
     def set_initial_weight(self, weight):
         if weight < 0 :
@@ -58,21 +69,24 @@ class Node(ABC):
     def add_children(self, children):
         self.childrens.append(children)
 
-    def send_packet(self, destination):
-        """
-        Send a packet to a neighboring node
-        :param destination: The destination node
-        """
-        destination.receive_packet()
-        self.current_weight -= 1
-        self.parents_w[self.parent.index(destination)] += 1
-
-        self.update_Q(-1)
-
-        if self.curent_weight < 0 :
-            raise Exeption("The weight (number of message in the buffer) cannot be negative")
     def distance(self, node):
         return self.position.distance(node.position)
+
+    def get_last_slot_number(self):
+        """Return the last timeslot when the node has been selected in the shedule"""
+        return self.last_slot
+
+    def set_slot_number(self, slot):
+        """Update the last timeslot when the node was selected for the scedule"""
+        self.last_slot = slot
+
+    def set_link(self, link):
+        """Set the last transmition link selected in the scheduling"""
+        self.link = link
+    def get_link(self):
+        """Return the last transmition link selected in the scheduling"""
+        return self.link
+        
     def __str__(self):
         """
         String representation

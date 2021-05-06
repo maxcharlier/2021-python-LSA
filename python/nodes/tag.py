@@ -51,3 +51,22 @@ class Tag(Node):
                 self.add_disrupted_node(node)
                 #do other side because connectivity is be derectionnal
                 node.add_disrupted_node(self)
+
+    def initialise_Q(self):
+        """Tag start with the number of packet to send to anchors, anchors need to sum packet from children after the routing step."""
+        Q =0 
+        for weight in self.parents_w:
+            Q += weight
+        self.Q = Q
+    def send_packet(self, destination, agregate=1):
+        """
+        Send a packet to a neighboring node
+        :param destination: The destination node
+        """
+        destination.receive_packet(agregate)
+        self.parents_w[self.parents.index(destination)] -= agregate
+
+        self.update_Q(-agregate)
+
+        if self.current_weight < 0 :
+            raise Exception("The weight (number of message in the buffer) cannot be negative")
