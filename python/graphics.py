@@ -6,7 +6,7 @@ from nodes.tag import Tag
 from nodes.point import Point
 import os
 
-def plot_network(all_nodes, filepath):
+def plot_neighbours(all_nodes, filepath):
     """
     Create a graph representing the current network
     :param all_nodes: All network nodes
@@ -14,6 +14,37 @@ def plot_network(all_nodes, filepath):
     """
     for node in all_nodes:
         for neighbour in node.neighbours:
+            plt.plot([node.position.x, neighbour.position.x], [node.position.y, neighbour.position.y], color='black',
+                     linewidth=0.5)
+
+        if node.type == 'tag':
+            plt.plot(node.position.x, node.position.y, color='red', marker='o')
+        else:
+            if node.sink:
+                plt.plot(node.position.x, node.position.y, color='royalblue', marker='s')
+            else:
+                plt.plot(node.position.x, node.position.y, color='green', marker='s')
+        # plt.annotate(str(node.Q), (node.position.x, node.position.y), xytext=(0, 4),
+        #              textcoords='offset points')
+        plt.annotate(str(node.name), (node.position.x, node.position.y), xytext=(0, -8),
+                     textcoords='offset points')
+
+    legend_elements = [Line2D([0], [0], color='red', marker='o', label='mobile'),
+                       Line2D([0], [0], color='royalblue', marker='s', label='anchor (root)'),
+                       Line2D([0], [0], color='green', marker='s', label='anchor'),
+                       Line2D([0], [0], color='black', linewidth=1, label='physical link')]
+    plt.legend(handles=legend_elements)
+    plt.savefig(filepath)
+    plt.close()
+
+def plot_C(all_nodes, filepath):
+    """
+    Create a graph representing the current network
+    :param all_nodes: All network nodes
+    :param filepath: The path to save the figure
+    """
+    for node in all_nodes:
+        for neighbour in node.disrupted_nodes:
             plt.plot([node.position.x, neighbour.position.x], [node.position.y, neighbour.position.y], color='black',
                      linewidth=0.5)
 

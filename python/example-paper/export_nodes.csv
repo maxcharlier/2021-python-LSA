@@ -1,0 +1,9 @@
+name,position,comm_range,disruption_range,type,sink
+A1,"(0, 0)",30,30,anchor,True
+A3,"(20, 0)",30,30,anchor,False
+A2,"(20, 20)",30,30,anchor,False
+A4,"(40, 0)",30,30,anchor,False
+t1,"(11.0, 9.0)",30,30,tag,False
+t2,"(9.0, 11.0)",30,30,tag,False
+t3,"(29.0, 9.0)",30,30,tag,False
+t4,"(31.0, 11.0)",30,30,tag,False

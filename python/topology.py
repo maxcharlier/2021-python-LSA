@@ -41,15 +41,15 @@ class Topology():
     anchors =[]
     tags = []
     anchors_all = []
-    for i in range(nodes_x):
+    for i in range(nodes_x+1):
       anchors.append([])
-      for j in range(nodes_y):
+      for j in range(nodes_y+1):
         name = "a_" + str(i) + "_" + str(j)
         pos = Point(i*self.space, j*self.space)
         node = Anchor(name, pos, self.comm_range, self.disruption_range)
         anchors[-1].append(node)
         #add tags in cell
-        if(i >=1 and j>= 1 and i < nodes_x and j < nodes_y):
+        if(i >=1 and j>= 1 and i <= nodes_x and j <= nodes_y):
           for n in range(self.R):
             name = "t_"+str(i)+"_"+str(j)+"_"+str(n)
             pos = Point((i-0.5)*self.space, (j-0.5)*self.space)
@@ -109,9 +109,10 @@ class Topology():
             sink = True
           else:
             sink = False
-          self.nodes.append(Anchor(row['name'], position, float(row['comm_range']), float(row['disruption_range']), sink))
+          self.nodes.append(Anchor(row['name'], position, float(row['comm_range']), float(row['disruption_range'])))
           if sink:
             self.set_sink(self.nodes[-1])
+            self.nodes[-1].set_as_sink(True)
         else:#tag
           self.nodes.append(Tag(row['name'], position, float(row['comm_range']), float(row['disruption_range'])))
 
@@ -150,8 +151,8 @@ class Topology():
       for node in self.nodes:
         nodes_name.append(node.name)
       for row in reader:
-        self.nodes[nodes_name.index(row['source'])].add_disrupted_node(nodes_name.index(row['destination']))
-
+        self.nodes[nodes_name.index(row['source'])].add_disrupted_node(self.nodes[nodes_name.index(row['destination'])])
+        print("{} -> {}".format(row['source'], row['destination']))
 
   def export_routing(self, file):
     with open(file, 'w') as csvfile:
@@ -160,7 +161,7 @@ class Topology():
       writer.writeheader()
       for node in self.nodes:
         if node.type == 'anchor' and not node.sink :
-          writer.writerow({'source': node.name, 'destination': node.parent.name, 'weight': node.parent_w})
+          writer.writerow({'source': node.name, 'destination': node.parent.name, 'weight': node.current_weight})
         elif node.type == 'tag':
           for i in range(len(node.parents)):
             writer.writerow({'source': node.name, 'destination': node.parents[i].name, 'weight': node.parents_w[i]})
@@ -173,7 +174,13 @@ class Topology():
       for node in self.nodes:
         nodes_name.append(node.name)
       for row in reader:
-        self.nodes[nodes_name.index(row['source'])].add_parent(self.nodes[nodes_name.index(row['destination'])], int(row['weight']))
+        index_source= nodes_name.index(row['source'])
+        if self.nodes[index_source].type == 'tag' :
+          self.nodes[index_source].add_parent(self.nodes[nodes_name.index(row['destination'])], int(row['weight']))
+        else:
+          self.nodes[index_source].set_routing_parent(self.nodes[nodes_name.index(row['destination'])], int(row['weight']))
+      for sink in self.sinks:
+        sink.initialise_Q()
 
 
 if __name__ == '__main__':
@@ -185,11 +192,15 @@ if __name__ == '__main__':
   # topology.set_sink(anchors[int(len(anchors)/2)])
   topology.set_nodes(anchors, tags)
   topology.generate_routing()
-  graphics.plot_network(topology.nodes, "./example/topology.pdf")
-  graphics.plot_network_routing(topology.nodes, "./example/plot_network_routing.pdf")
+  graphics.plot_C(topology.nodes, "./example/graph-C.pdf")
+  graphics.plot_neighbours(topology.nodes, "./example/plot_neighbours.pdf")
   graphics.plot_Q(topology.nodes, "./example/plot_Q.pdf")
   graphics.dot_network_routing(topology.nodes, "./example/dot_network_routing.dot")
+  topology.export_connectivity("./example/export_connectivity.csv")
+  topology.export_routing("./example/export_routing.csv")
+  topology.export_nodes("./example/export_nodes.csv")
   (schedule, duration) = scheduling.scheduling(topology, n_ch=6, agregation=5)
   print("duration : " + str(duration))
-  scheduling.print_schedule(schedule)
+  # scheduling.print_schedule(schedule)
   print("len schedule " + str(len(schedule)))
+  scheduling.export_schedule(schedule, "./example/schedule.csv")

@@ -41,5 +41,6 @@ class Point:
 
 
     def from_str(pos):
+        # print("pos " + str(pos)+ " - " + str(pos.replace('(', '').replace(')', '')))
         (x, y) = pos.replace('(', '').replace(')', '').split(', ')
-        return (float(x), float(y))
+        return Point(float(x), float(y))

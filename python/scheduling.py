@@ -1,4 +1,5 @@
 import time
+import csv
 
 class Link():
     def __init__(self, src, dest, weight = 1):
@@ -14,7 +15,11 @@ class Link():
         String representation
         :return: String representation
         """
-        return '[{}->{} w={}]'.format(self.src.name, self.dest.name,self.weight)
+        if self.src.type == 'tag':
+            #invert src and dest because anchor initialise the localisation
+            return '[{}->{} w={}]'.format(self.dest.name, self.src.name,self.weight)
+        else:
+            return '[{}->{} w={}]'.format(self.src.name, self.dest.name,self.weight)
 
     def __repr__(self) -> str:
         """
@@ -22,6 +27,20 @@ class Link():
         :return: Node representation as string
         """
         return self.__str__()
+
+    def get_src_str(self):
+        if self.src.type == 'tag':
+            #invert src and dest because anchor initialise the localisation
+            return '{}'.format(self.dest.name)
+        else:
+            return '{}'.format(self.src.name)
+    def get_dest_str(self):
+        if self.src.type == 'tag':
+            #invert src and dest because anchor initialise the localisation
+            return '{}'.format(self.src.name)
+        else:
+            return '{}'.format(self.dest.name)
+
 
 def scheduling(topology, n_ch=8, agregation=1):
     """
@@ -184,3 +203,55 @@ def print_schedule(schedule):
                 print("t " + str(t) + " ch " + str(ch) + " " + str(link))
             ch += 1
         t+=1
+
+def export_schedule(schedule, file):
+    with open(file, 'w') as csvfile:
+      fieldnames = ['timeslot', 'channel', 'source', 'destination', 'weight']
+      writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+      writer.writeheader()
+      t = 0
+      for timeslot in schedule:
+        ch = 0
+        for channel in timeslot:
+          for link in channel:
+            # print("t " + str(t) + " ch " + str(ch) + " " + str(link))
+            writer.writerow({'timeslot': t, 'channel': ch, 'source': link.get_src_str(), 'destination':link.get_dest_str(), 'weight': link.weight})
+          ch += 1
+        t+=1
+
+
+def import_schedule(file, nodes):
+  #initialise list of node name to get node objet in the nodes list based on the name in the CSV file.
+  nodes_name = []
+  for node in nodes:
+    nodes_name.append(node.name)
+
+  schedule = []
+  with open(file) as csvfile:
+    reader = csv.DictReader(csvfile)
+    t = 0
+    timeslot = []      
+    ch = 0
+    channel = []
+    for row in reader:
+      if (int(row['timeslot'])) > t:
+        t = int(row['timeslot'])
+        if len(channel) > 0:
+          timeslot.append(channel)
+        schedule.append(timeslot)
+        timeslot = []
+        ch = 0
+        channel = []
+        
+      if(int(row['channel']) > ch):
+        timeslot.append(channel)
+        channel = []
+        ch = int(row['channel'])
+
+      channel.append(Link(nodes[nodes_name.index(row['source'])], nodes[nodes_name.index(row['destination'])], int(row['weight'])))
+
+    if len(channel) > 0:
+      timeslot.append(channel)
+    if(len(timeslot) > 0):
+      schedule.append(timeslot)
+  return schedule

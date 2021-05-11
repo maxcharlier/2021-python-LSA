@@ -40,6 +40,8 @@ class Anchor(Node):
 
     def set_parent(self, parent, weight):
         """
+        Set the parrent of this anchor and update the rank of the node according the parent.
+        This function is used when generating the rooting.
         :param parent: a node 
         :param wieght: the number of message to transmit to this parent
         For anchors, always add the links to the sink first.
@@ -59,6 +61,26 @@ class Anchor(Node):
 
         self.path = [self] + self.parent.path
         self.sink_distance = self.parent.sink_distance + self.distance(self.parent)
+
+
+    def set_routing_parent(self, parent, weight):
+        """
+        Set the parent of the anchor according to imported rooting.
+        :param parent: a node 
+        :param wieght: the number of message to transmit to this parent
+        For anchors, always add the links to the sink first.
+        """
+        #first remove this node from childrens list of his current parent
+
+        if self.parent != None:
+            self.parent.remove_children(self)
+
+        #set the parents
+        self.parent = parent
+        self.current_weight = weight
+
+        parent.add_children(self)
+
     def remove_children(self, children):
         index = self.childrens.index(children)
         self.childrens.pop(index)
