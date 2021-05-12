@@ -6,9 +6,10 @@ import scheduling
 import topology
 
 topology_ = topology.Topology(40, 20, 20, 30, 30, 2, 1)
-topology_.import_nodes("./export_nodes.csv")
-topology_.import_connectivity("./export_connectivity.csv")
-topology_.import_routing("./export_routing.csv")
+topology_.import_param("./topology_param.csv")
+topology_.import_nodes("./nodes.csv")
+topology_.import_connectivity("./connectivity.csv")
+topology_.import_routing("./routing.csv")
 # anchors = []
 # tags = []
 # for node in topology_.nodes:

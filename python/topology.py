@@ -85,6 +85,7 @@ class Topology():
     return (anchors, tags)
 
   def export_nodes(self, file):
+    """Recommanded file name is "nodes.csv" """
     with open(file, 'w') as csvfile:
       fieldnames = ['name', 'position', 'comm_range', 'disruption_range', 'type', 'sink']
       writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -98,6 +99,7 @@ class Topology():
         writer.writerow({'name': node.name, 'position': str(node.position), 'comm_range': str(node.comm_range), 'disruption_range': str(node.disruption_range), 'type': str(node.type), 'sink': str(sink)})
 
   def import_nodes(self, file):
+    """Recommanded file name is "nodes.csv" """
     with open(file) as csvfile:
       reader = csv.DictReader(csvfile)
       self.nodes=[]
@@ -115,6 +117,22 @@ class Topology():
             self.nodes[-1].set_as_sink(True)
         else:#tag
           self.nodes.append(Tag(row['name'], position, float(row['comm_range']), float(row['disruption_range'])))
+
+  def export_param(self, file):
+    """Recommanded file name is "topology_param.csv" """
+    with open(file, 'w') as csvfile:
+      fieldnames = ['x', 'y', 'space', 'comm_range', 'disruption_range', 'R', 'nb_tag_loc']
+      writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+      writer.writeheader()
+      writer.writerow({'x': str(self.x), 'y': str(self.y), 'space': str(self.space), 'comm_range': str(self.comm_range), 'disruption_range': str(self.disruption_range), 'R': str(self.R), 'nb_tag_loc': str(self.nb_tag_loc)})
+
+  def import_param(self, file):
+    """Recommanded file name is "topology_param.csv" """
+    with open(file) as csvfile:
+      reader = csv.DictReader(csvfile)
+      for row in reader:
+        return Topology(int(row['x']), int(row['y']), int(row['space']), int(row['comm_range']), int(row['disruption_range']), int(row['R']), int(row['nb_tag_loc']))
 
   def set_sink(self, node):
     self.sinks.append(node)
@@ -136,6 +154,7 @@ class Topology():
       sink.initialise_Q()
 
   def export_connectivity(self, file):
+    """Recommanded file name is "connectivity.csv" """
     with open(file, 'w') as csvfile:
       fieldnames = ['source', 'destination']
       writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -145,6 +164,7 @@ class Topology():
           writer.writerow({'source': source.name, 'destination': dest.name})
 
   def import_connectivity(self, file):
+        """Recommanded file name is "connectivity.csv" """
     with open(file) as csvfile:
       reader = csv.DictReader(csvfile)
       nodes_name = []
@@ -155,6 +175,7 @@ class Topology():
         print("{} -> {}".format(row['source'], row['destination']))
 
   def export_routing(self, file):
+    """Recommanded file name is "routing.csv" """
     with open(file, 'w') as csvfile:
       fieldnames = ['source', 'destination', 'weight']
       writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -168,6 +189,7 @@ class Topology():
 
 
   def import_routing(self, file):
+    """Recommanded file name is "routing.csv" """
     with open(file) as csvfile:
       reader = csv.DictReader(csvfile)
       nodes_name = []

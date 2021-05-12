@@ -205,22 +205,39 @@ def print_schedule(schedule):
         t+=1
 
 def export_schedule(schedule, file):
-    with open(file, 'w') as csvfile:
-      fieldnames = ['timeslot', 'channel', 'source', 'destination', 'weight']
-      writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-      writer.writeheader()
-      t = 0
-      for timeslot in schedule:
-        ch = 0
-        for channel in timeslot:
-          for link in channel:
-            # print("t " + str(t) + " ch " + str(ch) + " " + str(link))
-            writer.writerow({'timeslot': t, 'channel': ch, 'source': link.get_src_str(), 'destination':link.get_dest_str(), 'weight': link.weight})
-          ch += 1
-        t+=1
+  """Recommanded file name is "schedule.csv" """
+  with open(file, 'w') as csvfile:
+    fieldnames = ['timeslot', 'channel', 'source', 'destination', 'weight']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    t = 0
+    for timeslot in schedule:
+      ch = 0
+      for channel in timeslot:
+        for link in channel:
+          # print("t " + str(t) + " ch " + str(ch) + " " + str(link))
+          writer.writerow({'timeslot': t, 'channel': ch, 'source': link.get_src_str(), 'destination':link.get_dest_str(), 'weight': link.weight})
+        ch += 1
+      t+=1
 
+def export_schedule_stat(duration, schedule, file):
+  """Recommanded file name is "schedule_stat.csv" """
+  with open(file, 'w') as csvfile:
+    fieldnames = ['duration', 'len', 'nb_slot', 'nb_twr', 'nb_data', 'mean_agregation', 'mean_channel_usage']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+    t = 0
+    for timeslot in schedule:
+      ch = 0
+      for channel in timeslot:
+        for link in channel:
+          # print("t " + str(t) + " ch " + str(ch) + " " + str(link))
+          writer.writerow({'timeslot': t, 'channel': ch, 'source': link.get_src_str(), 'destination':link.get_dest_str(), 'weight': link.weight})
+        ch += 1
+      t+=1
 
 def import_schedule(file, nodes):
+  """Recommanded file name is "schedule.csv" """
   #initialise list of node name to get node objet in the nodes list based on the name in the CSV file.
   nodes_name = []
   for node in nodes:
@@ -242,7 +259,7 @@ def import_schedule(file, nodes):
         timeslot = []
         ch = 0
         channel = []
-        
+
       if(int(row['channel']) > ch):
         timeslot.append(channel)
         channel = []
