@@ -72,12 +72,12 @@ def scheduling(topology, n_ch=8, agregation=1):
         if (len(sinks) > 0):
             return False
         return False
-    print(sinks)
+    # print(sinks)
     # While sinks have not received all the ranging measurements from the network
     while end_shedule(sinks):
         matching = matching_sinks(sinks, current_slot, agregation)
-        print("matching")
-        print(matching)
+        # print("matching")
+        # print(matching)
         colored = coloring(matching, n_ch)
         timeslot = []
         for color in colored:
@@ -106,7 +106,7 @@ def matching_sinks(sinks, slot_number, agregation):
     #first order sink by number of message to receive (bigger first)
     sinks_ = list(sinks)
     favorite_sinks = [s for s in sinks_ if s.get_weight(None) < s.get_Q()]
-    print(favorite_sinks)
+    # print(favorite_sinks)
     while favorite_sinks:
         #order sink by the number of messages they need to receives
         i = favorite_sinks.index(max(favorite_sinks, key=lambda s: s.get_Q()-s.get_weight(None)))
@@ -239,7 +239,7 @@ def export_schedule_stat(duration, schedule, topology, file):
       for channel in timeslot:
         for link in channel:
           # print("t " + str(t) + " ch " + str(ch) + " " + str(link))
-          if link.src.type == 'tag' or  link.dst.type == 'tag':
+          if link.src.type == 'tag' or  link.dest.type == 'tag':
             nb_twr += 1
           else :
             nb_data += 1
@@ -249,7 +249,7 @@ def export_schedule_stat(duration, schedule, topology, file):
         nb_ch += 1
       t+=1
 
-      writer.writerow({'duration': str(duration), 'len_schedule': str(len_schedule), 'nb_slot': str(nb_slot), 'nb_twr': str(nb_twr), 'nb_data': str(nb_data), 'agregation': str(agregation), 'nb_ch': str(nb_ch)})  
+    writer.writerow({'duration': str(duration), 'len_schedule': str(len_schedule), 'nb_slot': str(nb_slot), 'nb_twr': str(nb_twr), 'nb_data': str(nb_data), 'agregation': str(agregation), 'nb_ch': str(nb_ch)})  
 
 
 def import_schedule_stat(file):

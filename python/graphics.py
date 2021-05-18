@@ -24,8 +24,6 @@ def plot_neighbours(all_nodes, filepath):
                 plt.plot(node.position.x, node.position.y, color='royalblue', marker='s')
             else:
                 plt.plot(node.position.x, node.position.y, color='green', marker='s')
-        # plt.annotate(str(node.Q), (node.position.x, node.position.y), xytext=(0, 4),
-        #              textcoords='offset points')
         plt.annotate(str(node.name), (node.position.x, node.position.y), xytext=(0, -8),
                      textcoords='offset points')
 
@@ -34,6 +32,7 @@ def plot_neighbours(all_nodes, filepath):
                        Line2D([0], [0], color='green', marker='s', label='anchor'),
                        Line2D([0], [0], color='black', linewidth=1, label='physical link')]
     plt.legend(handles=legend_elements)
+    # plt.show()
     plt.savefig(filepath)
     plt.close()
 

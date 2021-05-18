@@ -1,6 +1,6 @@
 import csv
 from typing import Dict, List, Tuple
-from math import ceil
+import math
 from nodes.anchor import Anchor
 from nodes.tag import Tag
 from nodes.point import Point
@@ -36,8 +36,8 @@ class Topology():
     one lower left, lower right, and upper left
     Return a list of anchors and tags
     """
-    nodes_x = ceil(self.x/self.space)
-    nodes_y = ceil(self.y/self.space)
+    nodes_x = math.ceil(self.x/self.space)
+    nodes_y = math.ceil(self.y/self.space)
     anchors =[]
     tags = []
     anchors_all = []
@@ -152,6 +152,12 @@ class Topology():
       sink.broadcast_rank()
     for sink in self.sinks:
       sink.initialise_Q()
+    for node in self.nodes:
+      #check if we have a path to the sink for all anchors
+      if node.type == 'anchor' and not node.sink and node.parent == None:
+        return False
+    return True
+
 
   def export_connectivity(self, file):
     """Recommanded file name is "connectivity.csv" """
@@ -164,7 +170,7 @@ class Topology():
           writer.writerow({'source': source.name, 'destination': dest.name})
 
   def import_connectivity(self, file):
-        """Recommanded file name is "connectivity.csv" """
+    """Recommanded file name is "connectivity.csv" """
     with open(file) as csvfile:
       reader = csv.DictReader(csvfile)
       nodes_name = []
@@ -181,7 +187,7 @@ class Topology():
       writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
       writer.writeheader()
       for node in self.nodes:
-        if node.type == 'anchor' and not node.sink :
+        if node.type == 'anchor' and not node.sink and node.parent != None:
           writer.writerow({'source': node.name, 'destination': node.parent.name, 'weight': node.current_weight})
         elif node.type == 'tag':
           for i in range(len(node.parents)):
