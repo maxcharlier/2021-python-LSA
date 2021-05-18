@@ -14,7 +14,7 @@ class Topology():
     :param x the witdh of the grid in meters
     :param y the height of the grid in meters
     :param space the distance in meter between anchors
-    :param com_range the  communication range of anchors
+    :param com_range the communication range of anchors
     :param disruption_range the disruption range of communication of anchors
     :param R the number of tag per cell
     :param nb_tag_loc the number of localisation per tag per slotframe

@@ -6,7 +6,7 @@ import scheduling
 import topology
 
 topology_ = topology.Topology(40, 20, 20, 30, 30, 2, 1)
-topology_.import_param("./topology_param.csv")
+topology_ = import_param("./topology_param.csv")
 topology_.import_nodes("./nodes.csv")
 topology_.import_connectivity("./connectivity.csv")
 topology_.import_routing("./routing.csv")

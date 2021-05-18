@@ -220,21 +220,44 @@ def export_schedule(schedule, file):
         ch += 1
       t+=1
 
-def export_schedule_stat(duration, schedule, file):
+def export_schedule_stat(duration, schedule, topology, file):
   """Recommanded file name is "schedule_stat.csv" """
   with open(file, 'w') as csvfile:
-    fieldnames = ['duration', 'len', 'nb_slot', 'nb_twr', 'nb_data', 'mean_agregation', 'mean_channel_usage']
+    fieldnames = ['duration', 'len_schedule', 'nb_slot', 'nb_twr', 'nb_data', 'agregation', 'nb_ch']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     t = 0
+    len_schedule = len(schedule)
+    nb_slot = 0
+    nb_twr = 0
+    nb_data = 0
+    agregation = 0
+    nb_ch = 0
+
     for timeslot in schedule:
       ch = 0
       for channel in timeslot:
         for link in channel:
           # print("t " + str(t) + " ch " + str(ch) + " " + str(link))
-          writer.writerow({'timeslot': t, 'channel': ch, 'source': link.get_src_str(), 'destination':link.get_dest_str(), 'weight': link.weight})
+          if link.src.type == 'tag' or  link.dst.type == 'tag':
+            nb_twr += 1
+          else :
+            nb_data += 1
+            agregation += link.weight
+          nb_slot += 1
         ch += 1
+        nb_ch += 1
       t+=1
+
+      writer.writerow({'duration': str(duration), 'len_schedule': str(len_schedule), 'nb_slot': str(nb_slot), 'nb_twr': str(nb_twr), 'nb_data': str(nb_data), 'agregation': str(agregation), 'nb_ch': str(nb_ch)})  
+
+
+def import_schedule_stat(file):
+  """Recommanded file name is "schedule_stat.csv" """
+  with open(file) as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+      return row
 
 def import_schedule(file, nodes):
   """Recommanded file name is "schedule.csv" """

@@ -1,0 +1,2 @@
+param_x, param_y, param_space, param_comm_range, param_disruption_range, param_R, param_nb_tag_loc, param_sink_allocation, param_nb_sink, param_nb_ch, param_agregation, directory
+[20],[20],[1, 5, 10, 15, 20],[4],[5],[1],[1],['best'],[1],[6],[1],./example/bunch/var_space
