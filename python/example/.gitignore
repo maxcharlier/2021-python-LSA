@@ -1,0 +1,17 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+*.pdf
+nodes.csv
+connectivity.csv
+routing.csv
+schedule*.csv
+*.dot
+topology_param.csv

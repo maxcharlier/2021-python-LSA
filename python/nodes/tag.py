@@ -28,6 +28,7 @@ class Tag(Node):
             self.parents.append(parent)
             self.parents_w.append(weight)
             parent.add_children(self)
+            self.neighbours.append(parent)
 
     def get_weight(self, parent):
         if self.is_parent(parent):

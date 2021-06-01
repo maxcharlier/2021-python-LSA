@@ -4,7 +4,9 @@ from matplotlib.lines import Line2D
 from nodes.anchor import Anchor
 from nodes.tag import Tag
 from nodes.point import Point
+from scheduling import Link
 import os
+import matplotlib
 
 def plot_neighbours(all_nodes, filepath):
     """
@@ -203,3 +205,157 @@ def dot_network_routing(all_nodes, filepath):
     f.close()
     command = "dot -Kfdp -n -Tpdf -Gdpi=300 -o "+filepath[0:-4]+".pdf "+filepath
     os.system(command)  
+
+BLUE_COLOR="#00ABCC"
+BLUE_COLOR="#00ABCC"
+RED_COLOR="#A80039"
+GREY_COLOR="#cccccc"
+WHITE_COLOR="#FFFFFF"
+BLACK_COLOR="#000000"
+
+def plot_slot_frame(schedule, file="plot_slot_frame.pdf", nb_ch = 6):
+    """ Plot the slotframe
+      """
+    len_schedule = len(schedule)
+
+    SLOT_NUMBER = int(len_schedule) + 1
+    SLOT_HEIGHT = 0.5
+    SLOT_WIDTH = 1.0
+
+    X_START = 1.1 #offset from the left of the figure
+    Y_START = 0.7
+    X_END = X_START+(SLOT_NUMBER*SLOT_WIDTH)
+    Y_END = Y_START+(SLOT_HEIGHT*nb_ch)
+    LEGEND_OFFSET = 0.4
+
+
+    # Latex style
+    matplotlib.rc('text', usetex=True)
+    matplotlib.rc('font', family='serif')
+    matplotlib.rcParams.update({'font.size': 20})
+    plt.clf()
+    plot_width= (SLOT_NUMBER*SLOT_WIDTH) +1.35
+    plot_height= (nb_ch * SLOT_HEIGHT) + 1.5
+
+    print("Figure size : "+ str(plot_width) + ", " +str(plot_height))
+    fig = plt.figure(frameon=False, figsize=(plot_width, plot_height))
+    # ax = fig.add_subplot(111)
+    ax = fig.add_axes([0, 0, 1, 1]) #don't display frame and axis
+
+
+    x_lim = [0, plot_width]
+    y_lim = [0, plot_height]
+
+    def plot_slot(asn, channel_offset, _color=BLUE_COLOR, _text="A $\\rightarrow$ B",
+      _shared=False, _text_color=WHITE_COLOR):
+      """Draw a rectangle"""
+      # if _shared:
+      #   for i in range(0, self.channels):
+      #     if i != channel_offset:
+      #       plot_slot(asn, i, _color=GREY_COLOR, _text="Not allowable", _shared=False, _text_color=BLACK_COLOR)
+      x1 = X_START+SLOT_WIDTH*asn
+      x2 = x1 + SLOT_WIDTH
+      x = [x1, x1, x2, x2]
+      y1 = Y_START + SLOT_HEIGHT*channel_offset
+      y2 = y1 + SLOT_HEIGHT
+      y = [y1, y2, y2, y1]
+      ax.fill(x, y, color=_color)
+      if len(_text) > 0:
+        ax.text(x1+SLOT_WIDTH/2, y1+SLOT_HEIGHT/2, r'\textbf{'+str(_text)+'}', verticalalignment='center', horizontalalignment='center', color=_text_color)
+
+    # plot_slot(0, 3, _color=RED_COLOR, _text="Shared", _shared=True)
+    # plot_slot(1, 0, _color=BLUE_COLOR, _text="A $\\rightarrow$ C")
+
+    matplotlib.rcParams.update({'font.size': 12})
+    t= 0
+    for timeslot in schedule:
+      ch = 0
+      for channel in timeslot:
+        slot_text = ""
+        for link in channel:
+          if link.is_data():
+            color = GREY_COLOR
+          else:
+            color = BLUE_COLOR
+          if len(slot_text) > 0:
+            slot_text += "\\\\"
+
+          slot_text += link.str_short()
+        
+        plot_slot(t, ch, _color=color, _text=slot_text, _shared=False)
+          # print("t " + str(t) + " ch " + str(ch) + " " + str(link))
+
+        ch += 1
+      t+=1
+
+    matplotlib.rcParams.update({'font.size': 20})
+
+    #draw the tab
+    for i in range(0, nb_ch+1):
+      line_y = Y_START+(SLOT_HEIGHT*i)
+      ax.plot([X_START, X_END], [line_y, line_y], color=BLACK_COLOR, zorder=1)
+    for i in range(0, SLOT_NUMBER+1):
+      line_x = X_START+(i*SLOT_WIDTH)
+      if i % SLOT_NUMBER == 0:
+        ax.plot([line_x, line_x], [Y_START, Y_END], color=BLACK_COLOR, zorder=1,linewidth=4.0)
+      else:
+        ax.plot([line_x, line_x], [Y_START, Y_END], color=BLACK_COLOR, zorder=1, linestyle='--')
+
+    #plot legend channel offset
+    x_channel_offset_legend = X_START
+    ax.plot([x_channel_offset_legend, x_channel_offset_legend], [Y_START, Y_START+(SLOT_HEIGHT*nb_ch)], color=BLACK_COLOR, zorder=-1)
+    legend_end_bar_width = 0.1
+    for i in range(0, nb_ch+1):
+      y_bar = Y_START + SLOT_HEIGHT*i
+      ax.plot([x_channel_offset_legend-legend_end_bar_width/2, x_channel_offset_legend+legend_end_bar_width/2], [y_bar, y_bar], color=BLACK_COLOR, zorder=-1)
+
+    for i in range(0, nb_ch):
+      y_bar = Y_START + SLOT_HEIGHT*i + SLOT_HEIGHT/2
+      ax.text(X_START-legend_end_bar_width, y_bar, r""+str(i)+"", verticalalignment='center', horizontalalignment='right')
+    ax.text(X_START-LEGEND_OFFSET, Y_START+ (Y_END-Y_START)/2, r"\huge\begin{center}\textbf{Channel Offset\\(Freq. domain)}\end{center}", verticalalignment='center', rotation='vertical', horizontalalignment='right')
+
+    #plot legend ASN
+    y_asn_legend = Y_START
+    ax.plot([X_START, X_END], [y_asn_legend, y_asn_legend], color=BLACK_COLOR, zorder=-1)
+    arrow_lenght = (0.66)*LEGEND_OFFSET
+    ax.arrow(X_START, y_asn_legend, X_END-X_START+2*legend_end_bar_width, 0,
+        head_starts_at_zero=False, length_includes_head= True, fc='k', ec='k',
+        head_width=legend_end_bar_width, head_length=legend_end_bar_width)
+    for i in range(0, SLOT_NUMBER+1):
+      x_bar = X_START + SLOT_WIDTH*i
+      ax.plot([x_bar, x_bar], [y_asn_legend-legend_end_bar_width/2, y_asn_legend+legend_end_bar_width/2], color=BLACK_COLOR, zorder=-1)
+
+    for i in range(0, SLOT_NUMBER):
+      x_bar = X_START + SLOT_WIDTH*i + SLOT_WIDTH/2
+      ax.text(x_bar, Y_START-legend_end_bar_width, r""+str(i)+"", verticalalignment='top', horizontalalignment='center')
+    ax.text(X_START+(X_END-X_START)/2, Y_START-LEGEND_OFFSET, r"\huge\begin{center}\textbf{Absolute Slot Number (ASN) - (Time domain)}\end{center}", verticalalignment='top', horizontalalignment='center')
+
+
+    #plot legend TSN
+    y_asn_legend = Y_END
+    ax.plot([X_START, X_END], [y_asn_legend, y_asn_legend], color=BLACK_COLOR, zorder=-1)
+    arrow_lenght = (0.66)*LEGEND_OFFSET
+    ax.arrow(X_START, y_asn_legend, X_END-X_START+2*legend_end_bar_width, 0,
+        head_starts_at_zero=False, length_includes_head= True, fc='k', ec='k',
+        head_width=legend_end_bar_width, head_length=legend_end_bar_width)
+    for i in range(0, SLOT_NUMBER+1):
+      x_bar = X_START + SLOT_WIDTH*i
+      ax.plot([x_bar, x_bar], [y_asn_legend-legend_end_bar_width/2, y_asn_legend+legend_end_bar_width/2], color=BLACK_COLOR, zorder=-1)
+
+    for i in range(0, SLOT_NUMBER):
+      x_bar = X_START + SLOT_WIDTH*i + SLOT_WIDTH/2
+      ax.text(x_bar, Y_END+legend_end_bar_width, r""+str((i)%len_schedule)+"", verticalalignment='bottom', horizontalalignment='center')
+    ax.text(X_START+(X_END-X_START)/2, Y_END+LEGEND_OFFSET, r"\huge\begin{center}\textbf{TimeSlot Number (TSN)}\end{center}", verticalalignment='bottom', horizontalalignment='center')
+
+
+    # plot_slot(3, 3, _color=BLUE_COLOR, _text="B $\\rightarrow$ D")
+    plt.xlim(x_lim)
+    plt.ylim(y_lim)
+
+
+    plt.axis('off') #remove axis
+
+
+    #plt.tight_layout() # Avoid matplotlib to hide the axis label
+    # plt.show()
+    plt.savefig(file, format='pdf', dpi=1000, bbox_inches='tight', pad_inches=0)

@@ -21,6 +21,22 @@ class Link():
         else:
             return '[{}->{} w={}]'.format(self.src.name, self.dest.name,self.weight)
 
+    def str_short(self):
+        """
+        String representation
+        :return: String representation
+        """
+        if self.src.type == 'tag':
+            #invert src and dest because anchor initialise the localisation
+            return '{}$\\rightarrow${} {}'.format(self.dest.name, self.src.name,self.weight)
+        else:
+            return '{}$\\rightarrow${} {}'.format(self.src.name, self.dest.name,self.weight)
+
+    def is_data(self):
+        return self.src.type == 'anchor' and self.dest.type == 'anchor'
+
+    def is_twr(self):
+        return not self.is_data()
     def __repr__(self) -> str:
         """
         Node representation
@@ -129,7 +145,7 @@ def matching(anchor, slot_number, agregation):
         #children is listed if 
         # - they are anchor and they have a queue bigger or equals to the agregation or the queue equals the global queue of the node  
         # or if they are a tag and have message to send to the anchor.
-        favorite_children = [c for c in children if (c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= agregation or c.get_weight(anchor) == c.get_Q()) or c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number]
+        favorite_children = [c for c in children if ((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= agregation or c.get_weight(anchor) == c.get_Q())) or c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number]
         #if we have a favorite children we create the link with the best one and add this children to the childre list.
         if favorite_children:
             i = favorite_children.index(max(favorite_children, key=lambda c: c.get_Q()))

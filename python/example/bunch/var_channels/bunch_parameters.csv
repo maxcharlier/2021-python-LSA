@@ -1,0 +1,9 @@
+x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch,agregation,directory
+20,20,2.5,3,3,1,1,best,1,1,1,./example/bunch/var_channels/1/
+20,20,2.5,3,3,1,1,best,1,2,1,./example/bunch/var_channels/2/
+20,20,2.5,3,3,1,1,best,1,3,1,./example/bunch/var_channels/3/
+20,20,2.5,3,3,1,1,best,1,4,1,./example/bunch/var_channels/4/
+20,20,2.5,3,3,1,1,best,1,5,1,./example/bunch/var_channels/5/
+20,20,2.5,3,3,1,1,best,1,6,1,./example/bunch/var_channels/6/
+20,20,2.5,3,3,1,1,best,1,7,1,./example/bunch/var_channels/7/
+20,20,2.5,3,3,1,1,best,1,8,1,./example/bunch/var_channels/8/

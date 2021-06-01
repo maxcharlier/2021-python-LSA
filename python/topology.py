@@ -69,13 +69,13 @@ class Topology():
       for j in range(i):
         if anchors[i].is_recheable(anchors[j], self.comm_range):
           anchors[i].add_comm_node(anchors[j])
-          #do other side because connectivity is be derectionnal
+          #do other side because connectivity is bi-directionnal
           anchors[i].add_disrupted_node(anchors[j])
           anchors[j].add_comm_node(anchors[i])
           anchors[j].add_disrupted_node(anchors[i])
         elif anchors[i].is_recheable(anchors[j], self.disruption_range):
           anchors[i].add_disrupted_node(anchors[j])
-          #do other side because connectivity is be derectionnal
+          #do other side because connectivity is bi-directionnal
           anchors[j].add_disrupted_node(anchors[i])
     #connectivity of tags
     for tag in tags:
@@ -127,12 +127,12 @@ class Topology():
       writer.writeheader()
       writer.writerow({'x': str(self.x), 'y': str(self.y), 'space': str(self.space), 'comm_range': str(self.comm_range), 'disruption_range': str(self.disruption_range), 'R': str(self.R), 'nb_tag_loc': str(self.nb_tag_loc)})
 
-  def import_param(self, file):
+  def import_param(file):
     """Recommanded file name is "topology_param.csv" """
     with open(file) as csvfile:
       reader = csv.DictReader(csvfile)
       for row in reader:
-        return Topology(int(row['x']), int(row['y']), int(row['space']), int(row['comm_range']), int(row['disruption_range']), int(row['R']), int(row['nb_tag_loc']))
+        return Topology(float(row['x']), float(row['y']), float(row['space']), float(row['comm_range']), float(row['disruption_range']), int(row['R']), int(row['nb_tag_loc']))
 
   def set_sink(self, node):
     self.sinks.append(node)

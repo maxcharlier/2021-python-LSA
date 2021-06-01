@@ -1,2 +1,0 @@
-x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch,agregation,directory
-[20],[20],[2.5],[3],[3],[1],[1],['best'],[1],"[1, 2, 3, 4, 5, 6, 7, 8]",[1],./example/bunch/var_channels/

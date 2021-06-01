@@ -80,6 +80,9 @@ class Anchor(Node):
         self.current_weight = weight
 
         parent.add_children(self)
+        
+        #used for printing the neighbourg graph
+        self.neighbours.append(parent)
 
     def remove_children(self, children):
         index = self.childrens.index(children)

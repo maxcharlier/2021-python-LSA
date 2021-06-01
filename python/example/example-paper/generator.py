@@ -1,6 +1,6 @@
 from abc import ABC
 import sys 
-sys.path.append('..')
+sys.path.append('../..')
 import graphics
 import scheduling
 import topology

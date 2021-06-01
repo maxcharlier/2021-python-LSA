@@ -1,0 +1,7 @@
+x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch,agregation,directory
+20,20,2.5,4,5,1,1,best,1,6,1,./example/bunch/var_agreg/agreg-1/
+20,20,2.5,4,5,1,1,best,1,6,2,./example/bunch/var_agreg/agreg-2/
+20,20,2.5,4,5,1,1,best,1,6,3,./example/bunch/var_agreg/agreg-3/
+20,20,2.5,4,5,1,1,best,1,6,4,./example/bunch/var_agreg/agreg-4/
+20,20,2.5,4,5,1,1,best,1,6,5,./example/bunch/var_agreg/agreg-5/
+20,20,2.5,4,5,1,1,best,1,6,6,./example/bunch/var_agreg/agreg-6/
