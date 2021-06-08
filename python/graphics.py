@@ -359,3 +359,48 @@ def plot_slot_frame(schedule, file="plot_slot_frame.pdf", nb_ch = 6):
     #plt.tight_layout() # Avoid matplotlib to hide the axis label
     # plt.show()
     plt.savefig(file, format='pdf', dpi=1000, bbox_inches='tight', pad_inches=0)
+
+def plot_slotframe_distrib(schedule, file="plot_slotframe_distrib.pdf"):
+  """ Plot the number of communication per cells"""
+  #cells counter
+  nb_comm = range(0, 100)
+  c_comm_all = [0 for i in range(0, len(nb_comm))]
+  c_weight_all = [0 for i in range(0, len(nb_comm))]
+  #timeslot counter
+  t_comm_all = [0 for i in range(0, len(nb_comm))]
+  t_weight_all = [0 for i in range(0, len(nb_comm))]
+
+  for timeslot in schedule:
+    t_comm = 0
+    t_weight = 0
+    for channel in timeslot:
+      c_comm_all[len(channel)] += 1
+      c_weight = 0
+      for link in channel:
+        c_weight += link.weight
+        nb_comm +=1
+      c_weight_all[c_weight] += 1
+      t_comm += len(channel)
+      t_weight += c_weight
+    t_comm_all[t_comm] += 1
+    t_weight_all[t_weight] += 1
+
+  # convert to %
+  def convert_to_pourcent(_list):
+    tot = sum(_list)
+    for i in range(len(_list)):
+      _list[i] = float(_list[i])/tot * 100.0
+
+  plt.title("Slotframe Communications distribution")
+  plt.plot(nb_comm, convert_to_pourcent(c_comm_all), label="Communication per cells")
+  plt.plot(nb_comm, convert_to_pourcent(c_weight_all), label="Agreagation per cells")
+  plt.plot(nb_comm, convert_to_pourcent(t_comm_all), label="Communication per timeslot")
+  plt.plot(nb_comm, convert_to_pourcent(t_weight_all), label="Agreagation per timeslot")
+
+
+  plt.legend()
+
+  plt.savefig(file)
+  plt.close()
+        
+      

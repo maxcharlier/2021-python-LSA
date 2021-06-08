@@ -69,6 +69,9 @@ class Node(ABC):
     def add_children(self, children):
         self.childrens.append(children)
 
+    def remove_children(self, children):
+        self.childrens.remove(children)
+        
     def distance(self, node):
         return self.position.distance(node.position)
 
@@ -86,7 +89,7 @@ class Node(ABC):
     def get_link(self):
         """Return the last transmition link selected in the scheduling"""
         return self.link
-        
+
     def __str__(self):
         """
         String representation

@@ -53,6 +53,25 @@ def gen_graphs_from_file(result_directory, input_param="bunch_parameters.csv", o
   plt.savefig(result_directory + output_file)
   plt.close()
 
+def slot_frame_lenght_graph(input_params, curves_names, output_file="stat_graph.pdf"):
+  """Generate plot graph based on the schedule stat"""
+  for i in range(len(input_params)):
+    len_schedule = []
+    nb_tags = []
+    parameters = Bunch_Parameters.get_parameters_from_file(input_params[i])
+    for param in parameters:
+      stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+      len_schedule.append(int(stat["len_schedule"]))
+      nb_tags.append(int(stat["nb_tags"]))
+    plt.plot(nb_tags, len_schedule, label=curves_names[i])
+
+  title="Benefit of concurrent communications and agregation"
+  plt.title(title)
+  plt.legend()
+
+  plt.savefig(output_file)
+  plt.close()
+
 
 
 if __name__ == '__main__':

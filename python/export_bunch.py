@@ -47,6 +47,10 @@ class Bunch_Parameters():
     if directory[-1] != '/':
       directory = directory + '/'
     self.directory = directory
+    self.dist_sink = 0
+
+  def set_dist_sink(self, dist_sink):
+    self.dist_sink = dist_sink
 
   def export_toplogy_param(parameters, file="toplogy_param.csv"):
     """Recommanded file name is "toplogy_param.csv" """
@@ -65,7 +69,9 @@ class Bunch_Parameters():
     with open(file) as csvfile:
       reader = csv.DictReader(csvfile)
       for row in reader:
-        parameters.append(Bunch_Parameters(float(row['x']), float(row['y']), float(row['space']), float(row['comm_range']), float(row['disruption_range']), int(row['R']), int(row['nb_tag_loc']), str(row['sink_allocation']), int(row['nb_sink']), int(row['nb_ch']),  int(row['agregation']), str(row['directory']) ))
+        parameters.append(Bunch_Parameters(float(row['x']), float(row['y']), float(row['space']), float(row['comm_range']), float(row['disruption_range']), int(row['R']), int(row['nb_tag_loc']), str(row['sink_allocation']), int(row['nb_sink']), int(row['nb_ch']),  int(row['agregation']), str(row['directory'])))
+        if "dist_sink" in row.keys():
+          parameters[-1].set_dist_sink(float(row['dist_sink']))
     return parameters
   
   def get_str_variable_1_parameter(parameters):
@@ -123,7 +129,7 @@ class Bunch_Parameters():
         
 
 
-def gen_topology(parameters):    
+def gen_topology(parameters, plot_graph=True):    
   """
   Generate a bunch of topology
   :param param a Bunch_Parameters object
@@ -131,11 +137,9 @@ def gen_topology(parameters):
   i = 0
   for param in parameters:
     print(str(param.x), str(param.y), str(param.space), str(param.comm_range), str(param.disruption_range), str(param.R), str(param.nb_tag_loc), str(param.sink_allocation), str(param.nb_sink), str(param.nb_ch), str(param.agregation), str(param.directory))
-    current_directory = param.directory
-    print("Current directory" + str(current_directory))
+
     topology_ = topology.Topology(param.x, param.y, param.space, param.comm_range, param.disruption_range, param.R, param.nb_tag_loc)
     (anchors, tags) = topology_.generate_nodes()
-    topology_.generate_neighbourhood(anchors, tags)
 
     if param.sink_allocation == SINK_BEST:
       topology_.set_sink(anchors[math.floor(len(anchors)/2)])
@@ -146,6 +150,17 @@ def gen_topology(parameters):
     else:
       raise Exception("Sink position parameter have an unsupported value " + str(param.sink_allocation))
 
+    current_directory = param.directory
+
+    if param.dist_sink > 0:
+      print("filter tags " + str(param.dist_sink))
+      tags = topology.Topology.filter_tags(tags, topology_.sinks[0], param.dist_sink)
+
+
+    print("Current directory" + str(current_directory))
+
+    topology_.generate_neighbourhood(anchors, tags)
+
     try:
         os.makedirs(current_directory)
     except OSError:
@@ -154,14 +169,15 @@ def gen_topology(parameters):
         print ("Successfully created the directory %s" % current_directory)
 
     topology_.set_nodes(anchors, tags)
-
-    graphics.plot_neighbours(topology_.nodes, current_directory + "plot_neighbours.pdf")
+    if plot_graph:
+      graphics.plot_neighbours(topology_.nodes, current_directory + "plot_neighbours.pdf")
     if(topology_.generate_routing()):
       print("Routing generated")
-      graphics.plot_C(topology_.nodes, current_directory + "graph-C.pdf")
-      graphics.plot_network_routing(topology_.nodes, current_directory + "plot_network_routing.pdf")
-      graphics.plot_Q(topology_.nodes, current_directory + "plot_Q.pdf")
-      graphics.dot_network_routing(topology_.nodes, current_directory + "dot_network_routing.dot")
+      if plot_graph: 
+        graphics.plot_C(topology_.nodes, current_directory + "graph-C.pdf")
+        graphics.plot_network_routing(topology_.nodes, current_directory + "plot_network_routing.pdf")
+        graphics.plot_Q(topology_.nodes, current_directory + "plot_Q.pdf")
+        graphics.dot_network_routing(topology_.nodes, current_directory + "dot_network_routing.dot")
 
       (schedule, duration) = scheduling.scheduling(topology_, n_ch=param.nb_ch, agregation=param.agregation)
 

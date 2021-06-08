@@ -239,7 +239,7 @@ def export_schedule(schedule, file):
 def export_schedule_stat(duration, schedule, topology, file):
   """Recommanded file name is "schedule_stat.csv" """
   with open(file, 'w') as csvfile:
-    fieldnames = ['duration', 'len_schedule', 'nb_slot', 'nb_twr', 'nb_data', 'agregation', 'nb_ch']
+    fieldnames = ['duration', 'len_schedule', 'nb_slot', 'nb_twr', 'nb_data', 'agregation', 'nb_ch', 'nb_anchors', 'nb_tags']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
     t = 0
@@ -265,7 +265,7 @@ def export_schedule_stat(duration, schedule, topology, file):
         nb_ch += 1
       t+=1
 
-    writer.writerow({'duration': str(duration), 'len_schedule': str(len_schedule), 'nb_slot': str(nb_slot), 'nb_twr': str(nb_twr), 'nb_data': str(nb_data), 'agregation': str(agregation), 'nb_ch': str(nb_ch)})  
+    writer.writerow({'duration': str(duration), 'len_schedule': str(len_schedule), 'nb_slot': str(nb_slot), 'nb_twr': str(nb_twr), 'nb_data': str(nb_data), 'agregation': str(agregation), 'nb_ch': str(nb_ch), 'nb_anchors' : str(topology.nb_anchors), 'nb_tags' : str(topology.nb_tags)})  
 
 
 def import_schedule_stat(file):

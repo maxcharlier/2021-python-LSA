@@ -30,6 +30,10 @@ class Tag(Node):
             parent.add_children(self)
             self.neighbours.append(parent)
 
+    def remove(self):
+        for parent in self.parents:
+            parent.remove_children(self)
+            
     def get_weight(self, parent):
         if self.is_parent(parent):
             return self.parents_w[self.parents.index(parent)]

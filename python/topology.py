@@ -30,6 +30,8 @@ class Topology():
     self.sinks = [] #start with no sink
     if(comm_range > disruption_range):
       raise Exception("Communication range need to be shorter that disruption range.")
+    self.nb_anchors = 0
+    self.nb_tags = 0
 
   def generate_nodes(self):
     """Generate the grid based on the space between nodes, also generate tags node based on 3 closes anchors :
@@ -61,10 +63,21 @@ class Topology():
       anchors_all += anchors[-1]
 
     return (anchors_all, tags)
+  def filter_tags(tags, sink, dist):
+    """Return tags that are less than dist meters of the sink"""
+    select_tags = []
+    for tag in tags:
+      if sink.distance(tag) > dist :
+        tag.remove()
+      else:
+        select_tags.append(tag)
+    return select_tags
 
   def generate_neighbourhood(self, anchors, tags):
     """Generate for all nodes, the neighbourg (nodes in the communication range) and the connectivity (node in the disruption range)
     """
+    print("generate_neighbourhood anchors")
+
     for i in range(len(anchors)):
       for j in range(i):
         if anchors[i].is_recheable(anchors[j], self.comm_range):
@@ -77,6 +90,7 @@ class Topology():
           anchors[i].add_disrupted_node(anchors[j])
           #do other side because connectivity is bi-directionnal
           anchors[j].add_disrupted_node(anchors[i])
+    print("generate_neighbourhood tags")
     #connectivity of tags
     for tag in tags:
       tag.gen_comm_parents()
@@ -139,6 +153,8 @@ class Topology():
           
   def set_nodes(self, anchors, tags):
     self.nodes = anchors + tags
+    self.nb_anchors = len(anchors)
+    self.nb_tags = len(tags)
 
   def generate_routing(self):
     """Can be call after having generate nodes and neighbourhood """
