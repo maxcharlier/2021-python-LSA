@@ -61,6 +61,29 @@ def gen_graphs_from_file(result_directory, input_param="bunch_parameters.csv", o
   plt.savefig(result_directory + output_file)
   plt.close()
 
+def plot_timeslots_usage(input_params, curves_names, output_file="plot_timeslots_usage.pdf", savefig=True):
+  """Generate plot graph based on the schedule stat"""
+
+  nb_tags = []
+  nb_twr = []
+  nb_data = []
+  parameters = Bunch_Parameters.get_parameters_from_file(input_params[0])
+  for param in parameters:
+    stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+    nb_twr.append(int(stat["nb_twr"]))
+    nb_data.append(int(stat["nb_data"]))
+    nb_tags.append(int(stat["nb_tags"]))
+  plt.plot(nb_tags, nb_twr, label="TWR timeslot", marker=".")
+  plt.plot(nb_tags, nb_data, label="Data timeslot", marker="+")
+  plt.xlabel('Number of tags to localise in the network')
+  plt.ylabel('Number of timeslots')
+  plt.legend()
+  if savefig:
+    plt.savefig(output_file)
+    plt.close()
+  else:
+    plt.show()
+
 def slot_frame_lenght_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications"):
   """Generate plot graph based on the schedule stat"""
   for i in range(len(input_params)):
@@ -94,6 +117,10 @@ def positionning_frequency_graph(input_params, curves_names, output_file="positi
       if(int(stat["nb_tags"]) > 50):
         len_schedule.append(1000.0/(int(stat["len_schedule"])*timeslot_duration))
         nb_tags.append(int(stat["nb_tags"]))
+
+      if(int(stat["nb_tags"]) == 400):
+        print(curves_names[i])
+        print((int(stat["len_schedule"])*timeslot_duration)/1000)
     plt.plot(nb_tags, len_schedule, label=curves_names[i], marker=".")
   plt.xlabel('Number of tags to localise in the network')
   plt.ylabel('Localisation update (Hz)')
