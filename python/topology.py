@@ -130,7 +130,9 @@ class Topology():
             self.set_sink(self.nodes[-1])
             self.nodes[-1].set_as_sink(True)
         else:#tag
-          self.nodes.append(Tag(row['name'], position, float(row['comm_range']), float(row['disruption_range'])))
+          self.nodes.append(Tag(row['name'], position, float(row['comm_range']), float(row['disruption_range'])))  
+
+
 
   def export_param(self, file):
     """Recommanded file name is "topology_param.csv" """

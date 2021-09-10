@@ -1,0 +1,9 @@
+x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch,agregation,directory,dist_sink,name
+20,20,1,1.5,20,1,1,best,1,1,1,./result/ch1-agr1-TDMA-dist-13.5/,13.5,"No concurrent cummunication"
+20,20,1,1.5,2,1,1,best,1,1,1,./result/ch1-agr1-dist-13.5/,13.5,"1 Ch. - 1 Agreg."
+20,20,1,1.5,2,1,1,best,1,2,1,./result/ch2-agr1-dist-13.5/,13.5,"2 Ch. - 1 Agreg."
+20,20,1,1.5,2,1,1,best,1,8,1,./result/ch8-agr1-dist-13.5/,13.5,"8 Ch. - 1 Agreg."
+20,20,1,1.5,30,1,1,best,1,1,4,./result/ch1-agr4-TDMA-dist-13.5/,13.5,"No concurrent cummunication - 4 Agreg."
+20,20,1,1.5,2,1,1,best,1,1,4,./result/ch1-agr4-dist-13.5/,13.5,"1 Ch. - 4 Agreg."
+20,20,1,1.5,2,1,1,best,1,2,4,./result/ch2-agr4-dist-13.5/,13.5,"2 Ch. - 4 Agreg."
+20,20,1,1.5,2,1,1,best,1,8,4,./result/ch8-agr4-dist-13.5/,13.5,"8 Ch. - 4 Agreg."

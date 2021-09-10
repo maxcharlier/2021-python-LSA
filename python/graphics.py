@@ -363,7 +363,7 @@ def plot_slot_frame(schedule, file="plot_slot_frame.pdf", nb_ch = 6):
 def plot_slotframe_distrib(schedule, file="plot_slotframe_distrib.pdf"):
   """ Plot the number of communication per cells"""
   #cells counter
-  nb_comm = range(0, 100)
+  nb_comm = range(0, 500)
   c_comm_all = [0 for i in range(0, len(nb_comm))]
   c_weight_all = [0 for i in range(0, len(nb_comm))]
   #timeslot counter
@@ -378,7 +378,6 @@ def plot_slotframe_distrib(schedule, file="plot_slotframe_distrib.pdf"):
       c_weight = 0
       for link in channel:
         c_weight += link.weight
-        nb_comm +=1
       c_weight_all[c_weight] += 1
       t_comm += len(channel)
       t_weight += c_weight
@@ -390,6 +389,7 @@ def plot_slotframe_distrib(schedule, file="plot_slotframe_distrib.pdf"):
     tot = sum(_list)
     for i in range(len(_list)):
       _list[i] = float(_list[i])/tot * 100.0
+    return _list
 
   plt.title("Slotframe Communications distribution")
   plt.plot(nb_comm, convert_to_pourcent(c_comm_all), label="Communication per cells")
