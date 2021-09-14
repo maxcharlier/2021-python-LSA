@@ -146,7 +146,7 @@ def plot_slotframe_distrib(input_csv_file, file="plot_slotframe_stepdistrib.pdf"
     schedule = scheduling.import_schedule(param.directory + "schedule.csv", _topology.nodes)
 
     #cells counter
-    nb_comm = range(0, 500)
+    nb_comm = range(0, 2000)
     c_comm_all = [0 for i in range(0, len(nb_comm))]
     c_weight_all = [0 for i in range(0, len(nb_comm))]
     #timeslot counter

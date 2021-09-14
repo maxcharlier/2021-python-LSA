@@ -1,0 +1,8 @@
+x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch,agregation,directory,dist_sink,name
+20,20,1,1.5,20,1,1,best,1,1,1,./result/ch1-agr1-TDMA-dist-13.5/,13.5,"Global TDMA"
+20,20,1,1.5,2,1,1,best,1,1,1,./result/ch1-agr1-dist-13.5/,13.5,"1 Channel - agreg 1"
+20,20,1,1.5,2,1,1,best,1,1,14,./result/ch1-agr14-dist-13.5/,13.5,"1 Channel - agreg 14"
+20,20,1,1.5,2,1,1,best,1,2,1,./result/ch2-agr1-dist-13.5/,13.5,"2 Channels - agreg 1"
+20,20,1,1.5,2,1,1,best,1,2,14,./result/ch2-agr14-dist-13.5/,13.5,"2 Channels - agreg 14"
+20,20,1,1.5,2,1,1,best,1,8,1,./result/ch8-agr1-dist-13.5/,13.5,"8 Channels - agreg 1"
+20,20,1,1.5,2,1,1,best,1,8,14,./result/ch8-agr14-dist-13.5/,13.5,"8 Channels - agreg 14"
