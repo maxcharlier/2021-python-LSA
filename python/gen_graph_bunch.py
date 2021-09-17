@@ -245,6 +245,77 @@ def plot_slotframe_channels_usage(input_csv_file, file="plot_slotframe_channels_
   plt.savefig(file)
   plt.close()
 
+def positionning_frequency_bars(input_csv_file, output_file="positionning_frequency_bars.pdf", title="Frequency of positioning", timeslot_duration=2.5, savefig=True):
+  """Generate plot graph based on the schedule stat
+  param timeslot_duration is in ms
+  """
+  fig, ax = plt.subplots()
+
+  bar_x = []
+  bar_height = []
+  bar_tick_label = []
+  bar_label = []
+  i = 1
+  parameters = Bunch_Parameters.get_parameters_from_file(input_csv_file)
+  for param in parameters:
+    stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+
+    bar_x.append(i)
+    frequency = 1000.0/(int(stat["len_schedule"])*timeslot_duration)
+    bar_height.append(round(1000.0/(int(stat["len_schedule"])*timeslot_duration),2))
+    bar_tick_label.append(str(param.name))
+    i+=1
+  bar_label = bar_height
+
+  bar_plot = plt.bar(bar_x,bar_height,tick_label=bar_tick_label)
+
+  def autolabel(rects):
+    """ add text to describe the height of the bar plot """
+    max_height = max(bar_height)
+    for idx,rect in enumerate(bar_plot):
+      height = rect.get_height()
+      if height > (max(bar_height) / 4):
+        ax.text(rect.get_x() + rect.get_width()/2., .3*height,
+                bar_label[idx],
+                ha='center', va='top', rotation=90)
+      else:
+        ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+                bar_label[idx],
+                ha='center', va='bottom', rotation=90)
+
+  autolabel(bar_plot)
+
+  def autolabel_text(rects):
+    max_height = max(bar_height)
+    for idx,rect in enumerate(bar_plot):
+      height = rect.get_height()
+      if height > (max(bar_height) / (2./3)):
+        ax.text(rect.get_x() + rect.get_width()/2., 0.5,
+              "\\textbf{" + bar_tick_label[idx] + "}",
+              ha='center', va='bottom', rotation=90)
+      else:
+        ax.text(rect.get_x() + rect.get_width()/2., .95*max_height,
+              "\\textbf{" + bar_tick_label[idx] + "}",
+              ha='center', va='top', rotation=90)
+
+  autolabel_text(bar_plot)
+  plt.ylim(0,max(bar_height))
+
+  plt.ylabel('Localisation update (Hz)')
+  plt.title(title)
+  plt.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom='off',      # ticks along the bottom edge are off
+    top='off',         # ticks along the top edge are off
+    labelbottom='off') # labels along the bottom edge are off
+  # plt.legend()
+  if savefig:
+    plt.savefig(output_file)
+    plt.close()
+  else:
+    plt.show()
+
 if __name__ == '__main__':
   gen_graphs_from_file("./example/bunch/var_agreg/")
   gen_graphs_from_file("./example/bunch/var_channels/")

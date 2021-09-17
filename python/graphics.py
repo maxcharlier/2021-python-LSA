@@ -7,6 +7,10 @@ from nodes.point import Point
 from scheduling import Link
 import os
 import matplotlib
+# Latex style
+matplotlib.rc('text', usetex=True)
+matplotlib.rc('font', family='serif')
+matplotlib.rcParams.update({'font.size': 12})
 
 def plot_neighbours(all_nodes, filepath):
     """
@@ -15,14 +19,15 @@ def plot_neighbours(all_nodes, filepath):
     :param filepath: The path to save the figure
     """
     for node in all_nodes:
-        for neighbour in node.neighbours:
-            plt.plot([node.position.x, neighbour.position.x], [node.position.y, neighbour.position.y], color='black',
-                     linewidth=0.5)
+        # for neighbour in node.neighbours:
+        #     plt.plot([node.position.x, neighbour.position.x], [node.position.y, neighbour.position.y], color='black',
+        #              linewidth=0.5)
 
         if node.type == 'tag':
             plt.plot(node.position.x, node.position.y, color='red', marker='o')
         else:
             if node.sink:
+                # print("node.position.x, node.position.y" + str(node.position.x) +" " +str(node.position.y))
                 plt.plot(node.position.x, node.position.y, color='royalblue', marker='s')
             else:
                 plt.plot(node.position.x, node.position.y, color='green', marker='s')
@@ -34,9 +39,9 @@ def plot_neighbours(all_nodes, filepath):
                        Line2D([0], [0], color='green', marker='s', label='anchor'),
                        Line2D([0], [0], color='black', linewidth=1, label='physical link')]
     plt.legend(handles=legend_elements)
-    # plt.show()
-    plt.savefig(filepath)
-    plt.close()
+    plt.show()
+    # plt.savefig(filepath)
+    # plt.close()
 
 def plot_C(all_nodes, filepath):
     """
@@ -94,6 +99,47 @@ def plot_Q(all_nodes, filepath):
                        Line2D([0], [0], color='green', marker='s', label='anchor'),
                        Line2D([0], [0], color='black', linewidth=1, label='physical link')]
     plt.legend(handles=legend_elements)
+    plt.savefig(filepath)
+    plt.close()
+
+def plot_sinks_Q(sinks, filepath):
+    """
+    Create a graph representing the current network
+    :param all_nodes: All network nodes
+    :param filepath: The path to save the figure
+    """
+    fig, ax = plt.subplots()
+
+    bar_x = []
+    bar_height = []
+    bar_tick_label = []
+    bar_label = []
+    i = 1
+    for sink in sinks:
+        bar_x.append(i)
+        bar_height.append(sink.Q)
+        bar_tick_label.append(str(sink.position))
+        i+=1
+    bar_label = bar_height
+
+    bar_plot = plt.bar(bar_x,bar_height,tick_label=bar_tick_label)
+
+    def autolabel(rects):
+        for idx,rect in enumerate(bar_plot):
+            height = rect.get_height()
+            ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+                    bar_label[idx],
+                    ha='center', va='bottom', rotation=0)
+
+    autolabel(bar_plot)
+
+    plt.ylim(0,max(bar_height))
+
+    # plt.title('Add text for each bar with matplotlib')
+
+    # plt.savefig("add_text_bar_matplotlib_01.png", bbox_inches='tight')
+    # plt.show()
+
     plt.savefig(filepath)
     plt.close()
 

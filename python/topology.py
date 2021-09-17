@@ -44,16 +44,17 @@ class Topology():
     tags = []
     anchors_all = []
     for i in range(nodes_x+1):
+      print()
       anchors.append([])
       for j in range(nodes_y+1):
-        name = "a_" + str(i) + "_" + str(j)
+        name = "a-" + str(i) + "-" + str(j)
         pos = Point(i*self.space, j*self.space)
         node = Anchor(name, pos, self.comm_range, self.disruption_range)
         anchors[-1].append(node)
         #add tags in cell
         if(i >=1 and j>= 1 and i <= nodes_x and j <= nodes_y):
           for n in range(self.R):
-            name = "t_"+str(i)+"_"+str(j)+"_"+str(n)
+            name = "t-"+str(i)+"-"+str(j)+"-"+str(n)
             pos = Point((i-0.5)*self.space, (j-0.5)*self.space)
             tag = Tag(name, pos, self.comm_range, self.disruption_range)
             tag.add_parent(anchors[i-1][j-1], self.nb_tag_loc)
@@ -63,15 +64,39 @@ class Topology():
       anchors_all += anchors[-1]
 
     return (anchors_all, tags)
-  def filter_tags(tags, sink, dist):
+  def filter_tags(tags, sinks, dist):
     """Return tags that are less than dist meters of the sink"""
     select_tags = []
     for tag in tags:
-      if sink.distance(tag) > dist :
-        tag.remove()
-      else:
+      selected = False
+      for sink in sinks:
+        if sink.distance(tag) < dist :
+          selected = True
+      if selected:
         select_tags.append(tag)
     return select_tags
+
+  def anchors_node_search(self, node_ref, list_nodes):
+    """search all nodes cimetrical to node_ref 
+    exampe : grid 10*10
+    node ref (2,2) return node (8,2);(2,8);(8,8)"""
+    selected_nodes = [node_ref]
+    for node in list_nodes:
+      if node != node_ref:
+        if node.position.x == node_ref.position.x and node.position.y == self.y - node_ref.position.y:
+          selected_nodes.append(node)
+        elif node.position.x == self.x - node_ref.position.x and node.position.y == node_ref.position.y:
+          selected_nodes.append(node)
+        elif node.position.x == self.x - node_ref.position.x and node.position.y == self.y - node_ref.position.y:
+          selected_nodes.append(node)
+    return selected_nodes
+
+  def node_search(self, position, list_nodes):
+    """search all nodes cimetrical to node_ref 
+    exampe : position (2,2) return node in (2,2)"""
+    for node in list_nodes:
+      if node.position.x == position.x and node.position.y == position.y:
+        return node
 
   def generate_neighbourhood(self, anchors, tags):
     """Generate for all nodes, the neighbourg (nodes in the communication range) and the connectivity (node in the disruption range)
@@ -227,6 +252,10 @@ class Topology():
           self.nodes[index_source].set_routing_parent(self.nodes[nodes_name.index(row['destination'])], int(row['weight']))
       for sink in self.sinks:
         sink.initialise_Q()
+
+  def print_sinks_Q(self):
+    for sink in self.sinks:
+      print("sink (" + str(sink.position.x) + ", " + str(sink.position.y) + ") Q : " +str(sink.Q))
 
 
 if __name__ == '__main__':

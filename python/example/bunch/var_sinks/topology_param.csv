@@ -1,0 +1,13 @@
+x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch,agregation,directory,dist_sink,name
+20,20,1,1.5,20,1,1,best,1,1,1,./result/ch1-agr1-TDMA-dist-13.5-sink-1/,13.5,"Global TDMA Sink 1"
+20,20,1,1.5,2,1,1,best,1,1,1,./result/ch1-agr1-dist-13.5-sink-1/,13.5,"1 Ch. Agr. 1 Sink 1"
+20,20,1,1.5,2,1,1,best,1,1,14,./result/ch1-agr14-dist-13.5-sink-1/,13.5,"1 Ch. Agr. 14 Sink 1"
+20,20,1,1.5,2,1,1,best,1,8,1,./result/ch8-agr1-dist-13.5-sink-1/,13.5,"8 Ch. Agr. 1 Sink 1"
+20,20,1,1.5,2,1,1,best,1,8,14,./result/ch8-agr14-dist-13.5-sink-1/,13.5,"8 Ch. Agr. 14 Sink 1"
+20,20,1,1.5,2,1,1,best,2,8,14,./result/ch8-agr14-dist-13.5-sink-2/,13.5,"8 Ch. Agr. 14 Sinks 2"
+20,20,1,1.5,2,1,1,best,3,8,14,./result/ch8-agr14-dist-13.5-sink-3/,13.5,"8 Ch. Agr. 14 Sinks 3"
+20,20,1,1.5,2,1,1,best,4,8,14,./result/ch8-agr14-dist-13.5-sink-4/,13.5,"8 Ch. Agr. 14 Sinks 4"
+20,20,1,1.5,2,1,1,best,5,8,14,./result/ch8-agr14-dist-13.5-sink-5/,13.5,"8 Ch. Agr. 14 Sinks 5"
+20,20,1,1.5,2,1,1,best,9,8,14,./result/ch8-agr14-dist-13.5-sink-9/,13.5,"8 Ch. Agr. 14 Sinks 9"
+20,20,1,1.5,2,1,1,best,18,8,14,./result/ch8-agr14-dist-13.5-sink-18/,13.5,"8 Ch. Agr. 14 Sinks 18"
+20,20,1,1.5,2,1,1,all,440,8,14,./result/ch8-agr14-dist-13.5-sink-400/,13.5,"8 Ch. Agr. 14 Sinks 440"

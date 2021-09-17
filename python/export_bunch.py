@@ -14,6 +14,7 @@ import math
 SINK_BEST ="best"
 SINK_WORST = "worst"
 SINK_RANDOM = "random"
+SINK_ALL = "all"
 
 
 class Bunch_Parameters():
@@ -148,11 +149,83 @@ def gen_topology(parameters, plot_graph=True):
     (anchors, tags) = topology_.generate_nodes()
 
     if param.sink_allocation == SINK_BEST:
-      topology_.set_sink(anchors[math.floor(len(anchors)/2)])
+      if param.nb_sink == 1:
+        # add sink to the center
+        node = anchors[math.floor(len(anchors)/2)]
+        topology_.set_sink(node)
+        node.set_as_sink(True)
+      if param.nb_sink == 2:
+        selected_nodes = []
+        selected_nodes.append(topology_.node_search(Point(math.floor(param.x/4)*param.space, math.floor(param.y/4)*param.space), anchors))
+        selected_nodes.append(topology_.node_search(Point(math.floor(param.x/4)*param.space*3, math.floor(param.y/4)*param.space*3), anchors))
+        for node in selected_nodes:
+          topology_.set_sink(node)
+          node.set_as_sink(True)
+      if param.nb_sink == 3:
+        sinks = []
+        sinks.append(topology_.node_search(Point(math.floor(param.x/2)*param.space, math.floor(param.y/4)*param.space), anchors))
+        sinks.append(topology_.node_search(Point(math.floor(param.x/4)*param.space, math.floor(param.y/3)*param.space*2), anchors))
+        sinks.append(topology_.node_search(Point((math.floor(param.x/4)*param.space)*3, math.floor(param.y/3)*param.space*2), anchors))
+        for sink in sinks:
+          topology_.set_sink(sink)
+          sink.set_as_sink(True)
+        # for i in range(1, 3):
+        #   node = anchors[math.floor((len(anchors)/3)*i)]
+        #   topology_.set_sink(node)
+        #   node.set_as_sink(True)
+      if param.nb_sink == 4:
+        node = anchors[math.floor(len(anchors)/5)]
+        selected_nodes = topology_.anchors_node_search(node, anchors)
+        for node in selected_nodes:
+          topology_.set_sink(node)
+          node.set_as_sink(True)
+      if param.nb_sink == 5:
+        node = anchors[math.floor(len(anchors)/5)]
+        selected_nodes = topology_.anchors_node_search(node, anchors)
+        selected_nodes.append(anchors[math.floor(len(anchors)/2)])
+        topology_.set_sink(node)
+        node.set_as_sink(True)
+        for node in selected_nodes:
+          topology_.set_sink(node)
+          node.set_as_sink(True)
+      if param.nb_sink == 9:
+        node = topology_.node_search(Point(math.floor(param.x/6)*param.space, math.floor(param.y/6)*param.space), anchors)
+        selected_nodes = topology_.anchors_node_search(node, anchors)
+        #node in the center
+        selected_nodes.append(anchors[math.floor(len(anchors)/2)])
+
+        node = topology_.node_search(Point(math.floor(param.x/2)*param.space, math.floor(param.y/6)*param.space), anchors)
+        selected_nodes += topology_.anchors_node_search(node, anchors)
+        node = topology_.node_search(Point(math.floor(param.x/6)*param.space, math.floor(param.y/2)*param.space), anchors)
+        selected_nodes += topology_.anchors_node_search(node, anchors)
+
+        for node in selected_nodes:
+          topology_.set_sink(node)
+          node.set_as_sink(True)
+      if param.nb_sink == 18:
+
+        for i in range(0, 3):
+          for j in range(0,3):
+            x = round((param.x/13)*(param.space*(i*4)+1))
+            y = round((param.y/13)*(param.space*(j*4)+3))
+            # print("i " + str(i) + "j " + str(j) + "x " + str(x) + "y " + str(y))
+            node = topology_.node_search(Point(x, y), anchors)
+            topology_.set_sink(node)
+            node.set_as_sink(True)
+            x = round((param.x/13)*(param.space*(i*4)+3))
+            y = round((param.y/13)*(param.space*(j*4)+1))
+            # print("i " + str(i) + "j " + str(j) + "x " + str(x) + "y " + str(y))
+            node = topology_.node_search(Point(x, y), anchors)
+            topology_.set_sink(node)
+            node.set_as_sink(True)
     elif param.sink_allocation == SINK_WORST:
       topology_.set_sink(anchors[0])
     elif param.sink_allocation == SINK_RANDOM:
       topology_.set_sink(anchors[random.randint(0, len(anchors))])
+    elif param.sink_allocation == SINK_ALL:
+      for node in anchors:
+        topology_.set_sink(node)
+        node.set_as_sink(True)
     else:
       raise Exception("Sink position parameter have an unsupported value " + str(param.sink_allocation))
 
@@ -160,7 +233,7 @@ def gen_topology(parameters, plot_graph=True):
 
     if param.dist_sink > 0:
       print("filter tags " + str(param.dist_sink))
-      tags = topology.Topology.filter_tags(tags, topology_.sinks[0], param.dist_sink)
+      tags = topology.Topology.filter_tags(tags, topology_.sinks, param.dist_sink)
 
 
     print("Current directory" + str(current_directory))
@@ -177,8 +250,11 @@ def gen_topology(parameters, plot_graph=True):
     topology_.set_nodes(anchors, tags)
     if plot_graph:
       graphics.plot_neighbours(topology_.nodes, current_directory + "plot_neighbours.pdf")
+    
     if(topology_.generate_routing()):
       print("Routing generated")
+      # topology_.print_sinks_Q()
+      graphics.plot_sinks_Q(topology_.sinks, current_directory + "plot_sinks_Q.pdf")
       if plot_graph: 
         graphics.plot_C(topology_.nodes, current_directory + "graph-C.pdf")
         graphics.plot_network_routing(topology_.nodes, current_directory + "plot_network_routing.pdf")
@@ -196,6 +272,7 @@ def gen_topology(parameters, plot_graph=True):
       print("Topology " + current_directory + " duration " + str(duration))
     else:
       print("No all anchors have a path to the sinks.")
+    
 
 def update_stat_topology(param):    
   """
