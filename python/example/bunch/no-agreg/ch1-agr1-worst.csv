@@ -15,6 +15,5 @@ x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch
 20,20,1,1.5,2,1,1,worst,1,1,1,./result/ch1-agr1-worst-dist-22.5/,22.5
 20,20,1,1.5,2,1,1,worst,1,1,1,./result/ch1-agr1-worst-dist-24/,24
 20,20,1,1.5,2,1,1,worst,1,1,1,./result/ch1-agr1-worst-dist-25.5/,25.5
-20,20,1,1.5,2,1,1,worst,1,1,1,./result/ch1-agr1-worst-dist-27/,27
-20,20,1,1.5,2,1,1,worst,1,1,1,./result/ch1-agr1-worst-dist-28.5/,28.5
+
 20,20,1,1.5,2,1,1,worst,1,1,1,./result/ch1-agr1-worst-dist-30/,30
