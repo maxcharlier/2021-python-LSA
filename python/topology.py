@@ -74,6 +74,8 @@ class Topology():
           selected = True
       if selected:
         select_tags.append(tag)
+      else:
+        tag.remove()
     return select_tags
 
   def anchors_node_search(self, node_ref, list_nodes):

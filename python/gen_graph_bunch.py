@@ -62,7 +62,7 @@ def gen_graphs_from_file(result_directory, input_param="bunch_parameters.csv", o
   plt.close()
 
 def plot_timeslots_usage(input_params, curves_names, output_file="plot_timeslots_usage.pdf", savefig=True):
-  """Generate plot graph based on the schedule stat"""
+  """Generate the number of timeslot accoridng to the network size"""
 
   nb_tags = []
   nb_twr = []
@@ -75,8 +75,55 @@ def plot_timeslots_usage(input_params, curves_names, output_file="plot_timeslots
     nb_tags.append(int(stat["nb_tags"]))
   plt.plot(nb_tags, nb_twr, label="TWR timeslot", marker=".")
   plt.plot(nb_tags, nb_data, label="Data timeslot", marker="+")
-  plt.xlabel('Number of tags to localise in the network')
+  plt.xlabel('Number of cells of the network')
   plt.ylabel('Number of timeslots')
+  plt.legend()
+  if savefig:
+    plt.savefig(output_file)
+    plt.close()
+  else:
+    plt.show()
+
+def plot_transmissions_repartion(param_best, param_worst, output_file="plot_transmissions_repartition.pdf", savefig=True):
+  """Generate the number of transmissions accoridng to the network size
+  Best use case when the sink is in the center of the grid
+  Worst when the sink is in a corner"""
+
+  nb_tags_best = []
+  nb_tags_worst = []
+  nb_twr_best = []
+  nb_data_best = []
+  nb_twr_worst = []
+  nb_data_worst = []
+  all_best = []
+  all_worst = []
+  parameters_best = Bunch_Parameters.get_parameters_from_file(param_best)
+  for param in parameters_best:
+    stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+    nb_twr_best.append(int(stat["nb_twr"]))
+    nb_data_best.append(int(stat["nb_data"]))
+    all_best.append(int(stat["nb_data"])+int(stat["nb_twr"]))
+
+    nb_tags_best.append(int(stat["nb_tags"]))
+
+  parameters_worst = Bunch_Parameters.get_parameters_from_file(param_worst)
+  for param in parameters_worst:
+    stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+    nb_twr_worst.append(int(stat["nb_twr"]))
+    nb_data_worst.append(int(stat["nb_data"]))
+    all_worst.append(int(stat["nb_data"])+ int(stat["nb_twr"]))
+    nb_tags_worst.append(int(stat["nb_tags"]))
+
+  plt.plot(nb_tags_best, nb_twr_best, label="TWR - center", marker=".", linestyle='solid', color='tab:blue')
+  plt.plot(nb_tags_best, nb_data_best, label="Data - center", marker="+", linestyle='solid', color='tab:blue')  
+  plt.plot(nb_tags_best, all_best, label="All - center", marker="d", linestyle='solid', color='tab:blue')
+
+  plt.plot(nb_tags_worst, nb_twr_worst, label="TWR - corner", marker=".", linestyle='dashed', color='tab:orange')
+  plt.plot(nb_tags_worst, nb_data_worst, label="Data - corner", marker="+", linestyle='dashed', color='tab:orange')
+  plt.plot(nb_tags_worst, all_worst, label="All - corner", marker="d", linestyle='dashed', color='tab:orange')
+
+  plt.xlabel('Number of cells of the network')
+  plt.ylabel('Number of transmissions')
   plt.legend()
   if savefig:
     plt.savefig(output_file)

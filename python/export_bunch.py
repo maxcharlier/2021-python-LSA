@@ -220,8 +220,11 @@ def gen_topology(parameters, plot_graph=True):
             node.set_as_sink(True)
     elif param.sink_allocation == SINK_WORST:
       topology_.set_sink(anchors[0])
+      anchors[0].set_as_sink(True)
     elif param.sink_allocation == SINK_RANDOM:
-      topology_.set_sink(anchors[random.randint(0, len(anchors))])
+      random_anchor = anchors[random.randint(0, len(anchors))]
+      topology_.set_sink(random_anchor)
+      random_anchor.set_as_sink(True)
     elif param.sink_allocation == SINK_ALL:
       for node in anchors:
         topology_.set_sink(node)
@@ -234,6 +237,7 @@ def gen_topology(parameters, plot_graph=True):
     if param.dist_sink > 0:
       print("filter tags " + str(param.dist_sink))
       tags = topology.Topology.filter_tags(tags, topology_.sinks, param.dist_sink)
+      # print(tags)
 
 
     print("Current directory" + str(current_directory))
