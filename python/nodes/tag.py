@@ -75,3 +75,10 @@ class Tag(Node):
 
         if self.current_weight < 0 :
             raise Exception("The weight (number of message in the buffer) cannot be negative")
+
+    def get_rank(self):
+        """Return the number of hop between the node and the sink"""
+        rank = self.parents[0].get_rank()
+        for parent in self.parents[1:]:
+            rank = max(rank, parent.get_rank())
+        return rank + 1

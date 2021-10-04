@@ -223,7 +223,7 @@ class Topology():
         nodes_name.append(node.name)
       for row in reader:
         self.nodes[nodes_name.index(row['source'])].add_disrupted_node(self.nodes[nodes_name.index(row['destination'])])
-        print("{} -> {}".format(row['source'], row['destination']))
+        # print("{} -> {}".format(row['source'], row['destination']))
 
   def export_routing(self, file):
     """Recommanded file name is "routing.csv" """

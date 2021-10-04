@@ -9,6 +9,9 @@ import os
 import scheduling
 import topology
 import graphics
+import seaborn
+import pandas
+from statistics import mean
 
 from export_bunch import Bunch_Parameters
 
@@ -85,7 +88,7 @@ def plot_timeslots_usage(input_params, curves_names, output_file="plot_timeslots
     plt.show()
 
 def plot_transmissions_repartion(param_best, param_worst, output_file="plot_transmissions_repartition.pdf", savefig=True):
-  """Generate the number of transmissions accoridng to the network size
+  """Generate the number of transmissions according to the network size
   Best use case when the sink is in the center of the grid
   Worst when the sink is in a corner"""
 
@@ -125,6 +128,154 @@ def plot_transmissions_repartion(param_best, param_worst, output_file="plot_tran
   plt.xlabel('Number of cells of the network')
   plt.ylabel('Number of transmissions')
   plt.legend()
+  if savefig:
+    plt.savefig(output_file)
+    plt.close()
+  else:
+    plt.show()
+
+def plot_hop_count0(param_best, param_worst, output_file="plot_hop_count.pdf", savefig=True):
+  """Generate the number of hop according to the network size
+  Best use case when the sink is in the center of the grid
+  Worst when the sink is in a corner"""
+
+  nb_hop_best = []
+  nb_tags_best = []
+  nb_hop_worst = []
+  nb_tags_worst = []
+
+  parameters_best = Bunch_Parameters.get_parameters_from_file(param_best)
+  for param in parameters_best:
+    nb_hop = []
+    # topology_ = topology.Topology(20, 20, 1, 2, 3, 1, 1)
+    topology_ = topology.Topology.import_param(param.directory + "topology_param.csv")
+    topology_.import_nodes(param.directory + "nodes.csv")
+    topology_.import_connectivity(param.directory + "connectivity.csv")
+    topology_.import_routing(param.directory + "routing.csv")
+    # print(topology_.sinks)
+    #set the rank value of each node
+    # topology_.generate_routing()
+    for node in topology_.nodes:
+      nb_hop.append(node.get_rank())
+
+    stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+    nb_hop_best.append(nb_hop)
+    # print(nb_hop_best)
+    nb_tags_best.append(int(stat["nb_tags"]))
+
+  # parameters_worst = Bunch_Parameters.get_parameters_from_file(param_worst)
+  # for param in parameters_worst:
+  #   nb_hop = []
+  #   topology_ = topology.Topology(20, 20, 1, 2, 3, 1, 1)
+  #   topology_ = import_param(param.directory + "topology_param.csv")
+  #   topology_.import_nodes(param.directory + "nodes.csv")
+  #   topology_.import_connectivity(param.directory + "connectivity.csv")
+  #   topology_.import_routing(param.directory + "routing.csv")
+  #   #set the rank value of each node
+  #   topology_.generate_routing()
+  #   for node in topology_.nodes:
+  #     nb_hop.append(node.get_rank())
+
+  #   stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+  #   nb_hop_worst.append(nb_hop)
+  #   nb_tags_worst.append(int(stat["nb_tags"]))
+
+  print(nb_tags_best[5])
+  plt.boxplot(nb_hop_best[5], labels=nb_tags_best[5])
+
+  # plt.plot(nb_tags_worst, all_worst, label="All - corner", marker="d", linestyle='dashed', color='tab:orange')
+
+  plt.xlabel('Number of cells of the network')
+  plt.ylabel('Number of transmissions')
+  plt.legend()
+  if savefig:
+    plt.savefig(output_file)
+    plt.close()
+  else:
+    plt.show()
+
+
+def plot_hop_count(param_best, param_worst, output_file="plot_hop_count.pdf", savefig=True):
+  """Generate the number of hop according to the network size
+  Best use case when the sink is in the center of the grid
+  Worst when the sink is in a corner"""
+
+  fig, axs = plt.subplots(2)
+  def boxplot(parameter_file, axis, title):
+    nb_hops = []
+    nb_cells = []
+    directory_param = []
+    parameters = Bunch_Parameters.get_parameters_from_file(parameter_file)
+    for param in parameters:
+      nb_hop = []
+      # topology_ = topology.Topology(20, 20, 1, 2, 3, 1, 1)
+      topology_ = topology.Topology.import_param(param.directory + "topology_param.csv")
+      topology_.import_nodes(param.directory + "nodes.csv")
+      topology_.import_connectivity(param.directory + "connectivity.csv")
+      topology_.import_routing(param.directory + "routing.csv")
+      # print(topology_.sinks)
+      #set the rank value of each node
+      # topology_.generate_routing()
+      selected_node = []
+      for node in topology_.nodes:
+        if node.type == 'anchor' :
+          for children in node.childrens:
+            if children.type == 'tag': 
+              nb_hop.append(node.get_rank())
+        elif node.type == 'tag' :
+          nb_hop.append(node.get_rank())
+
+      stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+      nb_hops.append(nb_hop)
+      # print(nb_hops)
+      nb_cells.append(int(stat["nb_tags"]))
+      directory_param.append(param.directory)
+
+    #remove duplicate
+    i = 0
+    while i < len(nb_cells)-1:
+      if nb_cells[i] == nb_cells[i+1]:
+        del nb_cells[i]
+        del nb_hops[i]
+        del directory_param[i]
+      if nb_hops[i] == []:
+        del nb_cells[i]
+        del nb_hops[i]
+        del directory_param[i]
+      i+=1
+    means = []
+    for x in nb_hops:
+      means.append(mean(x))
+    print("len hops" + str(len(nb_hops)))
+    print("len nb_cells" + str(len(nb_cells)))
+    print("len directory" + str(len(directory_param)))
+    data =  {'hops': nb_hops,
+          'cells': nb_cells,
+          'directory' : directory_param}
+
+    dataframe  = pandas.DataFrame( data )
+    print(dataframe)
+
+    axis.plot(nb_cells, means, color='tab:grey', linestyle='--')
+    axis.boxplot(nb_hops, positions=nb_cells, labels= ['' for x in range(len(nb_cells))], widths=1.5)
+    axis.set_title(title)
+    # axis.set_xticks(range(0, 401, 50), ['' for x in range(0, 401, 50)]) 
+    axis.set_xticks([]) 
+    # axis.tick_params(labelrotation=90) 
+    axis.set_xlim(-10, 410)
+    axis.set_ylim(0, 22)
+    axis.set_ylabel('Path length')
+  boxplot(param_best, axs[0], "Sink in the center")
+  boxplot(param_worst, axs[1], "Sink in a corner")
+  plt.xticks(range(0, 401, 50), range(0, 401, 50), rotation=0)
+  plt.xlabel('Number of cells of the network')
+  # plt.xlim(-10, 410)
+  fig.tight_layout()
+  # plt.plot(nb_tags_worst, all_worst, label="All - corner", marker="d", linestyle='dashed', color='tab:orange')
+
+  # plt.xlabel('Number of cells of the network')
+  # plt.ylabel('Number of transmissions')
+  # plt.legend()
   if savefig:
     plt.savefig(output_file)
     plt.close()

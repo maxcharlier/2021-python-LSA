@@ -79,7 +79,7 @@ def scheduling(topology, n_ch=8, agregation=1):
     sinks = [sink for sink in topology.sinks]
     current_slot = 0 #current timeslot/step of the algorithm
 
-    def end_shedule(sinks):
+    def continue_schedule(sinks):
         """ Check if all sinks have receives mesages of the network"""
         for sink in sinks:
             if sink.get_Q() > sink.get_weight(None):
@@ -90,7 +90,7 @@ def scheduling(topology, n_ch=8, agregation=1):
         return False
     # print(sinks)
     # While sinks have not received all the ranging measurements from the network
-    while end_shedule(sinks):
+    while continue_schedule(sinks):
         matching = matching_sinks(sinks, current_slot, agregation)
         # print("matching")
         # print(matching)

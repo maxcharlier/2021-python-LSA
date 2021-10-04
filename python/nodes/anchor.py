@@ -146,3 +146,10 @@ class Anchor(Node):
         :return: True if the path passing through the neighboring node is shorter than the current path
         """
         return self.sink_distance > node.sink_distance + self.distance(node)
+
+    def get_rank(self):
+        """Return the number of hop between the node and the sink"""
+        # print(self.rank)
+        if self.rank == None:
+            self.rank = self.parent.get_rank() + 1
+        return self.rank
