@@ -256,9 +256,12 @@ def plot_hop_count(param_best, param_worst, output_file="plot_hop_count.pdf", sa
     dataframe  = pandas.DataFrame( data )
     print(dataframe)
 
-    axis.plot(nb_cells, means, color='tab:grey', linestyle='--')
-    axis.boxplot(nb_hops, positions=nb_cells, labels= ['' for x in range(len(nb_cells))], widths=1.5)
+    axis.plot(nb_cells, means, color='tab:grey', linestyle='--') 
+    #whis avoid outliers, defautl value is 1.5
+    axis.boxplot(nb_hops, positions=nb_cells, labels= ['' for x in range(len(nb_cells))], widths=1.5, whis=3.0)
     axis.set_title(title)
+    # axis.set_yticks(np.arange(0, 22, 2.5), [int(x) if int(x)%5==0 else '' for x in np.arange(0, 22, 2.5)])
+    axis.set_yticks(np.arange(0, 22, 2.5))
     # axis.set_xticks(range(0, 401, 50), ['' for x in range(0, 401, 50)]) 
     axis.set_xticks([]) 
     # axis.tick_params(labelrotation=90) 
