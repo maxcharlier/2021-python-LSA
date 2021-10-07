@@ -42,7 +42,7 @@ curves_names.append("8 Channels - agreg 14")
 
 slot_frame_lenght_graph(input_params, curves_names, output_file, title="")
 plot_timeslots_usage(input_params, curves_names, savefig=True)
-positionning_frequency_graph(input_params, curves_names, title="", savefig=False)
+positionning_frequency_graph(input_params, curves_names, title="", savefig=True)
 
 plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_0.pdf", type_of_curve_index=0, cumulative=False)
 plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_1.pdf", type_of_curve_index=1, cumulative=False)

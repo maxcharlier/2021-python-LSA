@@ -64,15 +64,12 @@ class Topology():
       anchors_all += anchors[-1]
 
     return (anchors_all, tags)
-  def filter_tags(tags, sinks, dist):
-    """Return tags that are less than dist meters of the sink"""
+  def filter_tags(tags, ref_filtering_node, dist):
+    """Return tags that are less than dist meters of the ref_filtering_node"""
     select_tags = []
     for tag in tags:
       selected = False
-      for sink in sinks:
-        if sink.distance(tag) < dist :
-          selected = True
-      if selected:
+      if ref_filtering_node.distance(tag) < dist :
         select_tags.append(tag)
       else:
         tag.remove()

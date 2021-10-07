@@ -148,6 +148,9 @@ def gen_topology(parameters, plot_graph=True):
     topology_ = topology.Topology(param.x, param.y, param.space, param.comm_range, param.disruption_range, param.R, param.nb_tag_loc)
     (anchors, tags) = topology_.generate_nodes()
 
+    #ref_filtering_node define the node used has reference point to filter tags with distance
+    #by default it is in the center, but it's place change when using "Worst" position of sink
+    ref_filtering_node = anchors[math.floor(len(anchors)/2)]
     if param.sink_allocation == SINK_BEST:
       if param.nb_sink == 1:
         # add sink to the center
@@ -219,6 +222,7 @@ def gen_topology(parameters, plot_graph=True):
             topology_.set_sink(node)
             node.set_as_sink(True)
     elif param.sink_allocation == SINK_WORST:
+      ref_filtering_node = anchors[0]
       topology_.set_sink(anchors[0])
       anchors[0].set_as_sink(True)
     elif param.sink_allocation == SINK_RANDOM:
@@ -236,7 +240,7 @@ def gen_topology(parameters, plot_graph=True):
 
     if param.dist_sink > 0:
       print("filter tags " + str(param.dist_sink))
-      tags = topology.Topology.filter_tags(tags, topology_.sinks, param.dist_sink)
+      tags = topology.Topology.filter_tags(tags, ref_filtering_node, param.dist_sink)
       # print(tags)
 
 

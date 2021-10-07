@@ -285,7 +285,7 @@ def plot_hop_count(param_best, param_worst, output_file="plot_hop_count.pdf", sa
   else:
     plt.show()
 
-def slot_frame_lenght_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications"):
+def slot_frame_lenght_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications", yticks=None):
   """Generate plot graph based on the schedule stat"""
   for i in range(len(input_params)):
     len_schedule = []
@@ -296,10 +296,14 @@ def slot_frame_lenght_graph(input_params, curves_names, output_file="slot_frame_
       len_schedule.append(int(stat["len_schedule"]))
       nb_tags.append(int(stat["nb_tags"]))
     plt.plot(nb_tags, len_schedule, label=curves_names[i], marker=".")
-  plt.xlabel('Number of tags to localise in the network')
+  plt.xlabel('Number of cells in the network')
   plt.ylabel('Lenght of the resulting slotframe')
   plt.title(title)
   plt.legend()
+  plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
+  if yticks !=None:
+    plt.yticks(yticks)
+
   # plt.show()
   plt.savefig(output_file)
   plt.close()
@@ -323,8 +327,9 @@ def positionning_frequency_graph(input_params, curves_names, output_file="positi
         print(curves_names[i])
         print((int(stat["len_schedule"])*timeslot_duration)/1000)
     plt.plot(nb_tags, len_schedule, label=curves_names[i], marker=".")
-  plt.xlabel('Number of tags to localise in the network')
+  plt.xlabel('Number of cells in the network')
   plt.ylabel('Localisation update (Hz)')
+  plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   plt.title(title)
   plt.legend()
   if savefig:
