@@ -43,5 +43,5 @@ curves_names.append("440 sinks")
 
 slot_frame_length_graph(input_params, curves_names, output_file, title="", yticks=range(0, 1201, 100))
 # plot_timeslots_usage(input_params, curves_names, savefig=True, index_param=6)
-# positionning_frequency_graph(input_params, curves_names, title="", savefig=True, legendcol=2)
+positionning_frequency_graph(input_params, curves_names, title="", savefig=True, legendcol=2)
 # positionning_frequency_bars(dir_path + "/topology_param.csv", output_file="positionning_frequency_bars.pdf", title="", savefig=True)
