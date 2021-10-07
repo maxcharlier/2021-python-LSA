@@ -20,8 +20,8 @@ input_params = []
 curves_names = []
 output_file=dir_path + "/slot_frame_lenght_graph.pdf"
 
-input_params.append(dir_path + "/ch1-agr1-TDMA.csv")
-curves_names.append("Global TDMA")
+# input_params.append(dir_path + "/ch1-agr1-TDMA.csv")
+# curves_names.append("Global TDMA")
 
 
 input_params.append(dir_path + "/ch1-agr1.csv")
@@ -40,17 +40,7 @@ curves_names.append("8 Channels - agreg 14")
 # for file in input_params:
 #   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
 
-slot_frame_lenght_graph(input_params, curves_names, output_file, title="")
-plot_timeslots_usage(input_params, curves_names, savefig=True)
+slot_frame_lenght_graph(input_params, curves_names, output_file, title="", yticks=range(0, 1401, 100))
+# plot_timeslots_usage(input_params, curves_names, savefig=True)
 positionning_frequency_graph(input_params, curves_names, title="", savefig=True)
-
-plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_0.pdf", type_of_curve_index=0, cumulative=False)
-plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_1.pdf", type_of_curve_index=1, cumulative=False)
-plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_2.pdf", type_of_curve_index=2, cumulative=False)
-plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_3.pdf", type_of_curve_index=3, cumulative=False)
-plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_cumulative_0.pdf", type_of_curve_index=0, cumulative=True)
-plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_cumulative_1.pdf", type_of_curve_index=1, cumulative=True)
-plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_cumulative_2.pdf", type_of_curve_index=2, cumulative=True)
-plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_cumulative_3.pdf", type_of_curve_index=3, cumulative=True)
-plot_slotframe_channels_usage(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_channels_usage.pdf", nb_channel_max=8, cumulative=True)
 

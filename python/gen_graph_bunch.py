@@ -64,13 +64,14 @@ def gen_graphs_from_file(result_directory, input_param="bunch_parameters.csv", o
   plt.savefig(result_directory + output_file)
   plt.close()
 
-def plot_timeslots_usage(input_params, curves_names, output_file="plot_timeslots_usage.pdf", savefig=True):
+def plot_timeslots_usage(input_params, curves_names, output_file="plot_timeslots_usage.pdf", savefig=True, index_param=0):
   """Generate the number of timeslot accoridng to the network size"""
 
   nb_tags = []
   nb_twr = []
   nb_data = []
-  parameters = Bunch_Parameters.get_parameters_from_file(input_params[0])
+  parameters = Bunch_Parameters.get_parameters_from_file(input_params[index_param])
+  print("plot_timeslots_usage() curve name : " + str(curves_names[index_param]))
   for param in parameters:
     stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
     nb_twr.append(int(stat["nb_twr"]))
@@ -308,7 +309,7 @@ def slot_frame_lenght_graph(input_params, curves_names, output_file="slot_frame_
   plt.savefig(output_file)
   plt.close()
 
-def positionning_frequency_graph(input_params, curves_names, output_file="positionning_frequency_graph.pdf", title="Frequency of positioning", timeslot_duration=2.5, savefig=True):
+def positionning_frequency_graph(input_params, curves_names, output_file="positionning_frequency_graph.pdf", title="Frequency of positioning", timeslot_duration=5, savefig=True, legendcol = 1):
   """Generate plot graph based on the schedule stat
   param timeslot_duration is in ms
   """
@@ -331,7 +332,7 @@ def positionning_frequency_graph(input_params, curves_names, output_file="positi
   plt.ylabel('Localisation update (Hz)')
   plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   plt.title(title)
-  plt.legend()
+  plt.legend(ncol=legendcol)
   if savefig:
     plt.savefig(output_file)
     plt.close()
@@ -451,7 +452,7 @@ def plot_slotframe_channels_usage(input_csv_file, file="plot_slotframe_channels_
   plt.savefig(file)
   plt.close()
 
-def positionning_frequency_bars(input_csv_file, output_file="positionning_frequency_bars.pdf", title="Frequency of positioning", timeslot_duration=2.5, savefig=True):
+def positionning_frequency_bars(input_csv_file, output_file="positionning_frequency_bars.pdf", title="Frequency of positioning", timeslot_duration=5, savefig=True):
   """Generate plot graph based on the schedule stat
   param timeslot_duration is in ms
   """
