@@ -14,7 +14,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 print(dir_path)
 input_params = []
 curves_names = []
-output_file=dir_path + "/slot_frame_lenght_graph.pdf"
+output_file=dir_path + "/slot_frame_length_graph.pdf"
 
 
 

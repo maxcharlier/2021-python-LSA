@@ -286,7 +286,7 @@ def plot_hop_count(param_best, param_worst, output_file="plot_hop_count.pdf", sa
   else:
     plt.show()
 
-def slot_frame_lenght_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications", yticks=None):
+def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications", yticks=None):
   """Generate plot graph based on the schedule stat"""
   for i in range(len(input_params)):
     len_schedule = []

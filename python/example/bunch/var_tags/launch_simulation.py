@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append('../../../')
 from export_bunch import gen_topology
-from gen_graph_bunch import slot_frame_lenght_graph
+from gen_graph_bunch import slot_frame_length_graph
 from gen_graph_bunch import plot_slotframe_distrib
 from gen_graph_bunch import plot_slotframe_channels_usage
 from export_bunch import Bunch_Parameters
@@ -41,7 +41,7 @@ curves_names.append("8 Ch. - 4 Agreg.")
 # for file in input_params:
 #   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
 
-slot_frame_lenght_graph(input_params, curves_names, output_file)
+slot_frame_length_graph(input_params, curves_names, output_file)
 
 plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_0.pdf", type_of_curve_index=0, cumulative=False)
 plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_1.pdf", type_of_curve_index=1, cumulative=False)

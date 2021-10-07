@@ -363,7 +363,7 @@ def plot_slot_frame(schedule, file="plot_slot_frame.pdf", nb_ch = 6):
     #plot legend ASN
     y_asn_legend = Y_START
     ax.plot([X_START, X_END], [y_asn_legend, y_asn_legend], color=BLACK_COLOR, zorder=-1)
-    arrow_lenght = (0.66)*LEGEND_OFFSET
+    arrow_length = (0.66)*LEGEND_OFFSET
     ax.arrow(X_START, y_asn_legend, X_END-X_START+2*legend_end_bar_width, 0,
         head_starts_at_zero=False, length_includes_head= True, fc='k', ec='k',
         head_width=legend_end_bar_width, head_length=legend_end_bar_width)
@@ -380,7 +380,7 @@ def plot_slot_frame(schedule, file="plot_slot_frame.pdf", nb_ch = 6):
     #plot legend TSN
     y_asn_legend = Y_END
     ax.plot([X_START, X_END], [y_asn_legend, y_asn_legend], color=BLACK_COLOR, zorder=-1)
-    arrow_lenght = (0.66)*LEGEND_OFFSET
+    arrow_length = (0.66)*LEGEND_OFFSET
     ax.arrow(X_START, y_asn_legend, X_END-X_START+2*legend_end_bar_width, 0,
         head_starts_at_zero=False, length_includes_head= True, fc='k', ec='k',
         head_width=legend_end_bar_width, head_length=legend_end_bar_width)
