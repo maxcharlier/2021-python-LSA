@@ -35,13 +35,13 @@ input_params.append(dir_path + "/ch8-agr1-sink9.csv")
 curves_names.append("9 sinks")
 input_params.append(dir_path + "/ch8-agr1-sink18.csv")
 curves_names.append("18 sinks")
-# input_params.append(dir_path + "/ch8-agr1-sink440.csv")
-# curves_names.append("440 sinks")
+input_params.append(dir_path + "/ch8-agr1-sink440.csv")
+curves_names.append("440 sinks")
 
 # for file in input_params:
 #   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
 
-# slot_frame_length_graph(input_params, curves_names, output_file, title="", yticks=range(0, 1201, 100))
+slot_frame_length_graph(input_params, curves_names, output_file, title="", yticks=range(0, 1201, 100))
 # plot_timeslots_usage(input_params, curves_names, savefig=True, index_param=6)
 # positionning_frequency_graph(input_params, curves_names, title="", savefig=True, legendcol=2)
-positionning_frequency_bars(dir_path + "/topology_param.csv", output_file="positionning_frequency_bars.pdf", title="", savefig=True)
+# positionning_frequency_bars(dir_path + "/topology_param.csv", output_file="positionning_frequency_bars.pdf", title="", savefig=True)

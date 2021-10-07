@@ -225,8 +225,9 @@ def plot_path_length(param_best, param_worst, output_file="path_length.pdf", sav
   else:
     plt.show()
 
-def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications", yticks=None):
+def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications", yticks=None, timeslot_duration = 5):
   """Generate plot graph based on the schedule stat"""
+  fig, ax1 = plt.subplots()
   for i in range(len(input_params)):
     len_schedule = []
     nb_tags = []
@@ -235,14 +236,27 @@ def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_
       stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
       len_schedule.append(int(stat["len_schedule"]))
       nb_tags.append(int(stat["nb_tags"]))
-    plt.plot(nb_tags, len_schedule, label=curves_names[i], marker=".")
+    ax1.plot(nb_tags, len_schedule, label=curves_names[i], marker=".")
   plt.xlabel('Number of cells in the network')
-  plt.ylabel('Lenght of the resulting slotframe')
+  ax1.set_ylabel('Length of the resulting slotframe')
+
   plt.title(title)
   plt.legend()
-  plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
+  ax1.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   if yticks !=None:
     plt.yticks(yticks)
+
+  if(timeslot_duration != 0):
+    #generate second axis
+    ax2 = ax1.twinx()
+    factor = float(timeslot_duration)/1000
+    print("slot_frame_length_graph factor : " + str(factor))
+    mn, mx = ax1.get_ylim()
+    print((mx, mx*factor))
+    # ax1.set_ylim(0, mx)
+    ax2.set_ylim(mn*factor, mx*factor)
+    ax2.set_ylabel("Slotframe druation (s) at 6.8 Mb/s")
+
 
   # plt.show()
   plt.savefig(output_file)
