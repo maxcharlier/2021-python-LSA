@@ -135,68 +135,7 @@ def plot_transmissions_repartion(param_best, param_worst, output_file="plot_tran
   else:
     plt.show()
 
-def plot_hop_count0(param_best, param_worst, output_file="plot_hop_count.pdf", savefig=True):
-  """Generate the number of hop according to the network size
-  Best use case when the sink is in the center of the grid
-  Worst when the sink is in a corner"""
-
-  nb_hop_best = []
-  nb_tags_best = []
-  nb_hop_worst = []
-  nb_tags_worst = []
-
-  parameters_best = Bunch_Parameters.get_parameters_from_file(param_best)
-  for param in parameters_best:
-    nb_hop = []
-    # topology_ = topology.Topology(20, 20, 1, 2, 3, 1, 1)
-    topology_ = topology.Topology.import_param(param.directory + "topology_param.csv")
-    topology_.import_nodes(param.directory + "nodes.csv")
-    topology_.import_connectivity(param.directory + "connectivity.csv")
-    topology_.import_routing(param.directory + "routing.csv")
-    # print(topology_.sinks)
-    #set the rank value of each node
-    # topology_.generate_routing()
-    for node in topology_.nodes:
-      nb_hop.append(node.get_rank())
-
-    stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
-    nb_hop_best.append(nb_hop)
-    # print(nb_hop_best)
-    nb_tags_best.append(int(stat["nb_tags"]))
-
-  # parameters_worst = Bunch_Parameters.get_parameters_from_file(param_worst)
-  # for param in parameters_worst:
-  #   nb_hop = []
-  #   topology_ = topology.Topology(20, 20, 1, 2, 3, 1, 1)
-  #   topology_ = import_param(param.directory + "topology_param.csv")
-  #   topology_.import_nodes(param.directory + "nodes.csv")
-  #   topology_.import_connectivity(param.directory + "connectivity.csv")
-  #   topology_.import_routing(param.directory + "routing.csv")
-  #   #set the rank value of each node
-  #   topology_.generate_routing()
-  #   for node in topology_.nodes:
-  #     nb_hop.append(node.get_rank())
-
-  #   stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
-  #   nb_hop_worst.append(nb_hop)
-  #   nb_tags_worst.append(int(stat["nb_tags"]))
-
-  print(nb_tags_best[5])
-  plt.boxplot(nb_hop_best[5], labels=nb_tags_best[5])
-
-  # plt.plot(nb_tags_worst, all_worst, label="All - corner", marker="d", linestyle='dashed', color='tab:orange')
-
-  plt.xlabel('Number of cells of the network')
-  plt.ylabel('Number of transmissions')
-  plt.legend()
-  if savefig:
-    plt.savefig(output_file)
-    plt.close()
-  else:
-    plt.show()
-
-
-def plot_hop_count(param_best, param_worst, output_file="plot_hop_count.pdf", savefig=True):
+def plot_path_length(param_best, param_worst, output_file="path_length.pdf", savefig=True):
   """Generate the number of hop according to the network size
   Best use case when the sink is in the center of the grid
   Worst when the sink is in a corner"""
@@ -309,7 +248,7 @@ def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_
   plt.savefig(output_file)
   plt.close()
 
-def positionning_frequency_graph(input_params, curves_names, output_file="positionning_frequency_graph.pdf", title="Frequency of positioning", timeslot_duration=5, savefig=True, legendcol = 1):
+def positionning_frequency_graph(input_params, curves_names, output_file="positionning_frequency.pdf", title="Frequency of positioning", timeslot_duration=5, savefig=True, legendcol = 1):
   """Generate plot graph based on the schedule stat
   param timeslot_duration is in ms
   """

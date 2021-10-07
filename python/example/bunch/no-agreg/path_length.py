@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append('../../../')
 from export_bunch import gen_topology
-from gen_graph_bunch import plot_hop_count
+from gen_graph_bunch import plot_path_length
 from gen_graph_bunch import gen_graphs_from_file
 from export_bunch import Bunch_Parameters
 import scheduling
@@ -26,4 +26,4 @@ curves_names.append("1 Channel")
 # for file in input_params:
 #   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
 
-plot_hop_count(dir_path + "/ch1-agr1.csv", dir_path + "/ch1-agr1-worst.csv", savefig=True,  output_file="plot_hop_count_no_agreg.pdf")
+plot_path_length(dir_path + "/ch1-agr1.csv", dir_path + "/ch1-agr1-worst.csv", savefig=True,  output_file="path_length.pdf")
