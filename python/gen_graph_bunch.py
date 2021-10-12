@@ -225,7 +225,7 @@ def plot_path_length(param_best, param_worst, output_file="path_length.pdf", sav
   else:
     plt.show()
 
-def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications", yticks=None, timeslot_duration = 5):
+def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications", yticks=None, timeslot_duration = 5, curves_markers = None, alpha=1.0, legendcol=1, curves_colors=None):
   """Generate plot graph based on the schedule stat"""
   fig, ax1 = plt.subplots()
   for i in range(len(input_params)):
@@ -236,12 +236,22 @@ def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_
       stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
       len_schedule.append(int(stat["len_schedule"]))
       nb_tags.append(int(stat["nb_tags"]))
-    ax1.plot(nb_tags, len_schedule, label=curves_names[i], marker=".")
+      if curves_colors != None:
+        color = curves_colors[i]
+      else:
+        color= None
+    if curves_markers != None : 
+      ax1.plot(nb_tags, len_schedule, label=curves_names[i], alpha=alpha, marker=curves_markers[i], c=color)
+    else:
+      ax1.plot(nb_tags, len_schedule, label=curves_names[i], alpha=alpha, marker=".", c=color)
+    if curves_colors != None:
+      ax1.plot(nb_tags, len_schedule, alpha=0.3, marker=",", linestyle='dotted', color='black')
+
   plt.xlabel('Number of cells in the network')
   ax1.set_ylabel('Length of the resulting slotframe')
 
   plt.title(title)
-  plt.legend()
+  plt.legend(ncol=legendcol)
   ax1.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   if yticks !=None:
     plt.yticks(yticks)
@@ -262,7 +272,41 @@ def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_
   plt.savefig(output_file)
   plt.close()
 
-def positionning_frequency_graph(input_params, curves_names, output_file="positionning_frequency.pdf", title="Frequency of positioning", timeslot_duration=5, savefig=True, legendcol = 1):
+def schedule_duration_graph(input_params, curves_names, output_file="schedule_duration_graph.pdf", title="Computation duration of the Scheduling", yticks=None, curves_markers = None, alpha=1.0, legendcol=1, curves_colors=None):
+  """Generate plot graph based on the schedule stat"""
+  fig, ax1 = plt.subplots()
+  for i in range(len(input_params)):
+    len_schedule = []
+    nb_tags = []
+    parameters = Bunch_Parameters.get_parameters_from_file(input_params[i])
+    for param in parameters:
+      stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+      len_schedule.append(float(stat["duration"]))
+      nb_tags.append(int(stat["nb_tags"]))
+    if curves_colors != None:
+      color = curves_colors[i]
+    else:
+      color= None
+    if curves_markers != None : 
+      ax1.plot(nb_tags, len_schedule, label=curves_names[i], alpha=alpha, marker=curves_markers[i], c=color)
+    else:
+      ax1.plot(nb_tags, len_schedule, label=curves_names[i], alpha=alpha, marker=".", c=color)
+    if curves_colors != None:
+      ax1.plot(nb_tags, len_schedule, alpha=0.3, marker=",", linestyle='dotted', color='black')
+  plt.xlabel('Number of cells in the network')
+  ax1.set_ylabel('Computation duration of the Scheduling (s)')
+
+  plt.title(title)
+  plt.legend(ncol=legendcol)
+  ax1.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
+  if yticks !=None:
+    plt.yticks(yticks)
+
+  # plt.show()
+  plt.savefig(output_file)
+  plt.close()
+
+def positionning_frequency_graph(input_params, curves_names, output_file="positionning_frequency.pdf", title="Frequency of positioning", timeslot_duration=5, savefig=True, legendcol = 1, curves_markers = None, alpha= 1.0, curves_colors=None):
   """Generate plot graph based on the schedule stat
   param timeslot_duration is in ms
   """
@@ -280,7 +324,16 @@ def positionning_frequency_graph(input_params, curves_names, output_file="positi
       if(int(stat["nb_tags"]) == 400):
         print(curves_names[i])
         print((int(stat["len_schedule"])*timeslot_duration)/1000)
-    plt.plot(nb_tags, len_schedule, label=curves_names[i], marker=".")
+    if curves_colors != None:
+      color = curves_colors[i]
+    else:
+      color= None
+    if curves_markers != None : 
+      plt.plot(nb_tags, len_schedule, label=curves_names[i], alpha=alpha, marker=curves_markers[i], color=color)
+    else:
+      plt.plot(nb_tags, len_schedule, label=curves_names[i], alpha=alpha, marker=".", color=color)
+    if curves_colors != None:
+      plt.plot(nb_tags, len_schedule, alpha=0.3, marker=",", linestyle='dotted', color='black')
   plt.xlabel('Number of cells in the network')
   plt.ylabel('Localisation update (Hz)')
   plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)

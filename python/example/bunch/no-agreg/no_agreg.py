@@ -10,6 +10,7 @@ from gen_graph_bunch import plot_transmissions_repartion
 from gen_graph_bunch import gen_graphs_from_file
 from gen_graph_bunch import plot_slotframe_distrib
 from gen_graph_bunch import plot_slotframe_channels_usage
+from gen_graph_bunch import schedule_duration_graph
 from export_bunch import Bunch_Parameters
 import scheduling
 import topology
@@ -50,6 +51,8 @@ curves_names.append("8 Channels")
 # plot_transmissions_repartion(dir_path + "/ch1-agr1.csv", dir_path + "/ch1-agr1-worst.csv", savefig=True,  output_file="plot_transmissions_repartition_no_agreg.pdf")
 slot_frame_length_graph(input_params, curves_names, output_file, title="")
 # plot_timeslots_usage(input_params, curves_names, savefig=True)
+schedule_duration_graph(input_params, curves_names, dir_path+"/schedule_duration_graph.pdf", title="")
+
 positionning_frequency_graph(input_params, curves_names, title="", savefig=True)
 
 # plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_0.pdf", type_of_curve_index=0, cumulative=False)

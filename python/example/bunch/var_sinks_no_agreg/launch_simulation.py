@@ -10,6 +10,7 @@ from gen_graph_bunch import gen_graphs_from_file
 from gen_graph_bunch import plot_slotframe_distrib
 from gen_graph_bunch import plot_slotframe_channels_usage
 from gen_graph_bunch import positionning_frequency_bars
+from gen_graph_bunch import schedule_duration_graph
 from export_bunch import Bunch_Parameters
 import scheduling
 import topology
@@ -45,3 +46,4 @@ slot_frame_length_graph(input_params, curves_names, output_file, title="", ytick
 # plot_timeslots_usage(input_params, curves_names, savefig=True, index_param=6)
 positionning_frequency_graph(input_params, curves_names, title="", savefig=True, legendcol=2)
 # positionning_frequency_bars(dir_path + "/topology_param.csv", output_file="positionning_frequency_bars.pdf", title="", savefig=True)
+schedule_duration_graph(input_params, curves_names, dir_path+"/schedule_duration_graph.pdf", title="")
