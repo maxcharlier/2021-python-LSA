@@ -6,18 +6,18 @@ from nodes.tag import Tag
 from nodes.point import Point
 import graphics
 import scheduling
-
+import random
 class Topology():
   def __init__(self, x, y, space, comm_range, disruption_range, R, nb_tag_loc):
     """
     Topology class
-    :param x the witdh of the grid in meters
+    :param x the width of the grid in meters
     :param y the height of the grid in meters
     :param space the distance in meter between anchors
     :param com_range the communication range of anchors
     :param disruption_range the disruption range of communication of anchors
     :param R the number of tag per cell
-    :param nb_tag_loc the number of localisation per tag per slotframe
+    :param nb_tag_loc the number of localization per tag per slotframe
     """
     self.x = x
     self.y = y
@@ -33,37 +33,73 @@ class Topology():
     self.nb_anchors = 0
     self.nb_tags = 0
 
-  def generate_nodes(self):
-    """Generate the grid based on the space between nodes, also generate tags node based on 3 closes anchors :
-    one lower left, lower right, and upper left
-    Return a list of anchors and tags
+  def generated_anchors(self):
+
+    """Generate the grid based on the space between anchors
+    Return a list of anchors
     """
     nodes_x = math.ceil(self.x/self.space)
     nodes_y = math.ceil(self.y/self.space)
     anchors =[]
-    tags = []
-    anchors_all = []
     for i in range(nodes_x+1):
-      print()
-      anchors.append([])
       for j in range(nodes_y+1):
         name = "a-" + str(i) + "-" + str(j)
         pos = Point(i*self.space, j*self.space)
-        node = Anchor(name, pos, self.comm_range, self.disruption_range)
-        anchors[-1].append(node)
-        #add tags in cell
-        if(i >=1 and j>= 1 and i <= nodes_x and j <= nodes_y):
-          for n in range(self.R):
-            name = "t-"+str(i)+"-"+str(j)+"-"+str(n)
-            pos = Point((i-0.5)*self.space, (j-0.5)*self.space)
-            tag = Tag(name, pos, self.comm_range, self.disruption_range)
-            tag.add_parent(anchors[i-1][j-1], self.nb_tag_loc)
-            tag.add_parent(anchors[i-1][j], self.nb_tag_loc)
-            tag.add_parent(anchors[i][j-1], self.nb_tag_loc)
-            tags.append(tag)
-      anchors_all += anchors[-1]
+        anchors.append(Anchor(name, pos, self.comm_range, self.disruption_range))
+    # print("anchors " +str(anchors))
+    return anchors
 
-    return (anchors_all, tags)
+  def generate_tags(self, anchors, seed=0):
+    nodes_x = math.ceil(self.x/self.space)
+    nodes_y = math.ceil(self.y/self.space)
+    tags = []
+    if (seed == 0):
+      """Generate tag uniformly into the network"""
+      for i in range(nodes_x+1):
+        for j in range(nodes_y+1):
+          #add tags in cell
+          if(i >=1 and j>= 1 and i <= nodes_x and j <= nodes_y):
+            for n in range(self.R):
+              name = "t-"+str(i)+"-"+str(j)+"-"+str(n)
+              pos = Point((i-0.5)*self.space, (j-0.5)*self.space)
+              tag = Tag(name, pos, self.comm_range, self.disruption_range)
+              self.find_and_set_parents_tag(tag, anchors)
+              tags.append(tag)
+    else:
+      random.seed(seed)
+      for i in range(0, nodes_x*nodes_y*self.R):
+        name = "t-"+str(i)
+        pos = Point(random.uniform(0, self.x*self.space), random.uniform(0, self.x*self.space))
+        tag = Tag(name, pos, self.comm_range, self.disruption_range)
+        self.find_and_set_parents_tag(tag, anchors)
+        tags.append(tag)
+    return tags
+   
+  def find_and_set_parents_tag(self, tag, anchors):
+    """Search and set 3 parents to the tag based on the cell it's belong"""
+    #compute i, j index of the tag in the network grid
+    i = math.floor(tag.position.x/self.space)
+    j = math.floor(tag.position.y/self.space)
+    #selection on the 3 anchors parents:
+    parents = []
+    parents.append(self.node_search(Point(i*self.space, (j+1)*self.space), anchors))
+    parents.append(self.node_search(Point((i+1)*self.space, j*self.space), anchors))
+    parents.append(self.node_search(Point((i+1)*self.space, (j+1)*self.space), anchors))
+    for parent in parents:
+      tag.add_parent(parent, self.nb_tag_loc)
+
+  def generate_nodes(self, seed=0):
+    """Generate the grid based on the space between nodes, also generate tags node based on 3 closes anchors :
+    one lower left, lower right, and upper left
+    Return a list of anchors and tags
+    """
+    anchors = self.generated_anchors()
+    # print("anchors " + str(anchors))
+    tags = self.generate_tags(anchors, seed)
+
+    return (anchors, tags)
+
+
   def filter_tags(tags, ref_filtering_node, dist):
     """Return tags that are less than dist meters of the ref_filtering_node"""
     select_tags = []
@@ -76,8 +112,8 @@ class Topology():
     return select_tags
 
   def anchors_node_search(self, node_ref, list_nodes):
-    """search all nodes cimetrical to node_ref 
-    exampe : grid 10*10
+    """search all nodes symmetrical to node_ref 
+    example : grid 10*10
     node ref (2,2) return node (8,2);(2,8);(8,8)"""
     selected_nodes = [node_ref]
     for node in list_nodes:
@@ -91,8 +127,10 @@ class Topology():
     return selected_nodes
 
   def node_search(self, position, list_nodes):
-    """search all nodes cimetrical to node_ref 
-    exampe : position (2,2) return node in (2,2)"""
+    """Search in the list of nodes, the node at the position pos
+    example : position (2,2) return node in (2,2)"""
+    # print(list_nodes)
+    # print(position)
     for node in list_nodes:
       if node.position.x == position.x and node.position.y == position.y:
         return node
@@ -123,7 +161,7 @@ class Topology():
     return (anchors, tags)
 
   def export_nodes(self, file):
-    """Recommanded file name is "nodes.csv" """
+    """Recommended file name is "nodes.csv" """
     with open(file, 'w') as csvfile:
       fieldnames = ['name', 'position', 'comm_range', 'disruption_range', 'type', 'sink']
       writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -137,7 +175,7 @@ class Topology():
         writer.writerow({'name': node.name, 'position': str(node.position), 'comm_range': str(node.comm_range), 'disruption_range': str(node.disruption_range), 'type': str(node.type), 'sink': str(sink)})
 
   def import_nodes(self, file):
-    """Recommanded file name is "nodes.csv" """
+    """Recommended file name is "nodes.csv" """
     with open(file) as csvfile:
       reader = csv.DictReader(csvfile)
       self.nodes=[]
@@ -159,7 +197,7 @@ class Topology():
 
 
   def export_param(self, file):
-    """Recommanded file name is "topology_param.csv" """
+    """Recommended file name is "topology_param.csv" """
     with open(file, 'w') as csvfile:
       fieldnames = ['x', 'y', 'space', 'comm_range', 'disruption_range', 'R', 'nb_tag_loc']
       writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -168,7 +206,7 @@ class Topology():
       writer.writerow({'x': str(self.x), 'y': str(self.y), 'space': str(self.space), 'comm_range': str(self.comm_range), 'disruption_range': str(self.disruption_range), 'R': str(self.R), 'nb_tag_loc': str(self.nb_tag_loc)})
 
   def import_param(file):
-    """Recommanded file name is "topology_param.csv" """
+    """Recommended file name is "topology_param.csv" """
     with open(file) as csvfile:
       reader = csv.DictReader(csvfile)
       for row in reader:

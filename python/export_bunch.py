@@ -50,12 +50,17 @@ class Bunch_Parameters():
     self.directory = directory
     self.dist_sink = 0
     self.name = None
+    self.seed = 0
 
   def set_dist_sink(self, dist_sink):
     self.dist_sink = dist_sink
 
   def set_name(self, name):
     self.name = name
+
+  def set_seed(self, seed):
+    """Define the seed generator for a randomized uniform distribution of tag in the network"""
+    self.seed = seed
 
   def export_toplogy_param(parameters, file="toplogy_param.csv"):
     """Recommanded file name is "toplogy_param.csv" """
@@ -79,6 +84,8 @@ class Bunch_Parameters():
           parameters[-1].set_dist_sink(float(row['dist_sink']))
         if "name" in row.keys():
           parameters[-1].set_name(str(row['name']))
+        if "seed" in row.keys():
+          parameters[-1].set_seed(int(row['seed']))
     return parameters
   
   def get_str_variable_1_parameter(parameters):
@@ -146,7 +153,8 @@ def gen_topology(parameters, plot_graph=True):
     print(str(param.x), str(param.y), str(param.space), str(param.comm_range), str(param.disruption_range), str(param.R), str(param.nb_tag_loc), str(param.sink_allocation), str(param.nb_sink), str(param.nb_ch), str(param.agregation), str(param.directory))
 
     topology_ = topology.Topology(param.x, param.y, param.space, param.comm_range, param.disruption_range, param.R, param.nb_tag_loc)
-    (anchors, tags) = topology_.generate_nodes()
+    
+    (anchors, tags) = topology_.generate_nodes(param.seed)
 
     #ref_filtering_node define the node used has reference point to filter tags with distance
     #by default it is in the center, but it's place change when using "Worst" position of sink

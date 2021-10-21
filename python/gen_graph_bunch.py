@@ -12,6 +12,7 @@ import graphics
 import seaborn
 import pandas
 from statistics import mean
+import matplotlib.patches as mpatches
 
 from export_bunch import Bunch_Parameters
 
@@ -335,7 +336,7 @@ def positionning_frequency_graph(input_params, curves_names, output_file="positi
     if curves_colors != None:
       plt.plot(nb_tags, len_schedule, alpha=0.3, marker=",", linestyle='dotted', color='black')
   plt.xlabel('Number of cells in the network')
-  plt.ylabel('Localisation update (Hz)')
+  plt.ylabel('Localization update (Hz)')
   plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   plt.title(title)
   plt.legend(ncol=legendcol)
@@ -345,20 +346,20 @@ def positionning_frequency_graph(input_params, curves_names, output_file="positi
   else:
     plt.show()
 
-type_of_curve = ["Communication per cells", "Agreagation per cells", "Communication per timeslot", "Agreagation per timeslot"]
+type_of_curve = ["Communication per channels", "Aggregation per channels", "Communication per timeslot", "Aggregation per timeslot"]
 
 def plot_slotframe_distrib(input_csv_file, file="plot_slotframe_stepdistrib.pdf", type_of_curve_index=0, cumulative=True):
-  """ Plot the number of communication per cells"""
+  """ Plot the number of communications per cells"""
 
   plt.title("Slotframe Communications distribution - " + type_of_curve[type_of_curve_index])
-  plt.gca().set_xscale('log')
+  # plt.gca().set_xscale('log')
   parameters = Bunch_Parameters.get_parameters_from_file(input_csv_file)
   for param in parameters:
     _topology = topology.Topology.import_param(param.directory + "/topology_param.csv")
     _topology.import_nodes(param.directory + "/nodes.csv")
     schedule = scheduling.import_schedule(param.directory + "schedule.csv", _topology.nodes)
 
-    #cells counter
+    #channel counter
     nb_comm = range(0, 2000)
     c_comm_all = [0 for i in range(0, len(nb_comm))]
     c_weight_all = [0 for i in range(0, len(nb_comm))]
@@ -404,7 +405,8 @@ def plot_slotframe_distrib(input_csv_file, file="plot_slotframe_stepdistrib.pdf"
       plt.plot(nb_comm, convert_to_pourcent(c_weight_all)[0:len(nb_comm)], drawstyle='steps-post', label=param.name)
     elif type_of_curve_index == 2:
       nb_comm = range(0, get_max_comm(t_comm_all))
-      plt.plot(nb_comm, convert_to_pourcent(t_comm_all)[0:len(nb_comm)], drawstyle='steps-post', label=param.name)
+      # plt.plot(nb_comm, convert_to_pourcent(t_comm_all)[0:len(nb_comm)], drawstyle='steps-post', label=param.name)
+      plt.step(nb_comm, convert_to_pourcent(t_comm_all)[0:len(nb_comm)], where='post', label=param.name)
     else:
       nb_comm = range(0, get_max_comm(t_weight_all))
       plt.plot(nb_comm, convert_to_pourcent(t_weight_all)[0:len(nb_comm)], drawstyle='steps-post', label=param.name)
@@ -413,6 +415,89 @@ def plot_slotframe_distrib(input_csv_file, file="plot_slotframe_stepdistrib.pdf"
   plt.legend()
 
   plt.savefig(file)
+  plt.close()
+
+def plot_timeslot_distrib(input_csv_file, file="plot_timeslot_distrib.pdf", cumulative=True, title="", max_ch=8, uniform_X_axis = True):
+  """ Plot the number of communications per timeslot"""
+
+  fig, axs = plt.subplots(3)
+  parameters = Bunch_Parameters.get_parameters_from_file(input_csv_file)
+  legend_handles = []
+  x =  []
+  overall_tot_comm = 0
+  overall_max_comm = 0
+  for param in parameters:
+    _topology = topology.Topology.import_param(param.directory + "/topology_param.csv")
+    _topology.import_nodes(param.directory + "/nodes.csv")
+    schedule = scheduling.import_schedule(param.directory + "schedule.csv", _topology.nodes)
+    #travel the slotframe and for each timeslot number count:
+    #the total number of communication
+    #the number of channel used
+
+    #generate the x axis and table according to the slotframe length:
+    stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+    lenght = int(stat["len_schedule"])
+    if uniform_X_axis : 
+      x = [float(i)/lenght for i in range(0, lenght)]
+    else:
+      x = range(0, lenght)
+    nb_comm = [0 for i in range(0, lenght)]
+    nb_weight = [0 for i in range(0, lenght)]
+    max_comm = [0 for i in range(0, lenght)]
+    nb_channel = [0 for i in range(0, lenght)]
+    t = 0
+    for timeslot in schedule:
+      t_comm = 0
+      t_weight = 0
+      for channel in timeslot:
+        for link in channel:
+          t_weight += link.weight
+        t_comm += len(channel)
+        if len(channel) > max_comm[t]:
+          max_comm[t] = len(channel)
+      nb_comm[t] = t_comm
+      nb_weight[t] = t_weight
+      nb_channel[t] = len(timeslot)
+      t+=1
+    if max(nb_comm) > overall_tot_comm:
+      overall_tot_comm = max(nb_comm)
+    linewidth = 0.3
+    if max(max_comm) > overall_max_comm:
+      overall_max_comm = max(max_comm)
+    linewidth = 0.3
+    marker=''
+    curve = axs[0].plot(x, nb_comm, linestyle='solid', marker=marker, markersize=0.5, alpha=0.7, linewidth=linewidth)
+
+    color = curve[0].get_color()
+    axs[1].plot(x, max_comm, linestyle='solid', marker=marker, markersize=0.5, alpha=0.7, linewidth=linewidth, color=color)
+    axs[2].plot(x, nb_channel, linestyle='solid', marker=marker, markersize=0.5, alpha=0.7, color=color, linewidth=linewidth)
+
+    # Creating legend with color box
+    legend_handles.append(mpatches.Patch(color=color, label=param.disruption_range, alpha=0.7))
+
+  axs[0].set_ylabel("Total \# \nCommunications")
+  axs[1].set_ylabel("Max \n\# Communications\nOn one channel")
+  axs[2].set_ylabel("\# of channels \nused")
+  axs[2].set_yticks(range(1, max_ch+1))
+
+  axs[0].set_xticklabels(['' for i in range(0, len(x)+1, 200)])
+  axs[0].set_xticks(range(0, len(x)+1, 200))
+  axs[0].set_yticks(range(0, overall_tot_comm+1, 50))
+  axs[1].set_xticklabels(['' for i in range(0, len(x)+1, 200)])
+  axs[1].set_yticks(range(0, overall_max_comm+1, 10))
+  axs[1].set_xticks(range(0, len(x)+1, 200))
+  axs[2].set_xticks(range(0, len(x)+1, 200))
+
+
+  plt.xlabel("Timeslot index")
+
+  if len(title) >0:
+    axs[0].set_title(title)
+  axs[0].legend(title="Disruption range :", ncol=3, handles=legend_handles)
+  # plt.tight_layout()
+  plt.savefig(file)
+  # plt.savefig(file, format='jpeg')
+
   plt.close()
 
 

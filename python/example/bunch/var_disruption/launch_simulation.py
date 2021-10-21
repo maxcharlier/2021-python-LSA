@@ -4,6 +4,8 @@ import os
 sys.path.append('../../../')
 from export_bunch import gen_topology
 from gen_graph_bunch import positionning_frequency_bars
+from gen_graph_bunch import plot_slotframe_distrib
+from gen_graph_bunch import plot_timeslot_distrib
 from export_bunch import Bunch_Parameters
 import scheduling
 import topology
@@ -129,9 +131,9 @@ input_params.append(dir_path + "/topology_param_ch8.csv")
 
 
 
-bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="channel_reuse_ch8.pdf", title="", savefig=True)
-bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="positionning_frequency_bars_ch8.pdf", title="", savefig=True, timeslot_duration=5)
-sub_lot_bar(input_params[0], [2, 3, 4, 10, 30], output_file="bar_graph_ch8.pdf", timeslot_duration=5, max_ch=8)
+# bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="channel_reuse_ch8.pdf", title="", savefig=True)
+# bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="positionning_frequency_bars_ch8.pdf", title="", savefig=True, timeslot_duration=5)
+# sub_lot_bar(input_params[0], [2, 3, 4, 10, 30], output_file="bar_graph_ch8.pdf", timeslot_duration=5, max_ch=8)
 
 
 input_params = [dir_path + "/topology_param_4ch.csv"]
@@ -140,6 +142,16 @@ input_params = [dir_path + "/topology_param_4ch.csv"]
 # for file in input_params:
 #   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
 
-bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="channel_reuse_ch4.pdf", title="", savefig=True, max_ch=4)
-bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="positionning_frequency_bars_ch4.pdf", title="", savefig=True, max_ch=4, timeslot_duration=5)
-sub_lot_bar(input_params[0], [2, 3, 4, 10, 30], output_file="bar_graph_ch4.pdf", timeslot_duration=5, max_ch=4)
+# bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="channel_reuse_ch4.pdf", title="", savefig=True, max_ch=4)
+# bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="positionning_frequency_bars_ch4.pdf", title="", savefig=True, max_ch=4, timeslot_duration=5)
+# sub_lot_bar(input_params[0], [2, 3, 4, 10, 30], output_file="bar_graph_ch4.pdf", timeslot_duration=5, max_ch=4)
+
+input_params = [dir_path + "/topology_param_ch8_400.csv"]
+# plot_slotframe_distrib(input_params[0], file="plot_slotframe_ch8-400_cells-coms_per_channel.pdf", type_of_curve_index=0, cumulative=True)
+# plot_slotframe_distrib(input_params[0], file="plot_slotframe_ch8-400_cells-aggreg_per_channel.pdf", type_of_curve_index=1, cumulative=True)
+# plot_slotframe_distrib(input_params[0], file="plot_slotframe_ch8-400_cells-coms_per_timeslot.pdf", type_of_curve_index=2, cumulative=True)
+# plot_slotframe_distrib(input_params[0], file="plot_slotframe_ch8-400_cells-aggreg_per_timeslot.pdf", type_of_curve_index=3, cumulative=True)
+# plot_timeslot_distrib(dir_path + "/topology_param_ch8_400.csv", file="plot_timeslot_ch8-400_cells.pdf", title="400 cells sheduled on 8 channels",max_ch=8)
+# plot_timeslot_distrib(dir_path + "/topology_param_ch4_400.csv", file="plot_timeslot_ch4-400_cells.pdf", title="400 cells sheduled on 4 channels",max_ch=4)
+plot_timeslot_distrib(dir_path + "/topology_param_ch8_400.csv", file="plot_timeslot_ch8-400_cells.pdf", max_ch=8, uniform_X_axis=False)
+plot_timeslot_distrib(dir_path + "/topology_param_ch4_400.csv", file="plot_timeslot_ch4-400_cells.pdf", max_ch=4, uniform_X_axis=False)
