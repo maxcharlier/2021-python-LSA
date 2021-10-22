@@ -82,7 +82,7 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
   plt.title(title)
   plt.legend(handles=legend_handles)
   if savefig:
-    plt.savefig(output_file)
+    plt.savefig(output_file[:-4]+"-nb-tags-per-cells.pdf")
     plt.close()
   else:
     plt.show()
@@ -90,11 +90,20 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
 
   #plot2
   fig, ax = plt.subplots()
+
+  ax_secondary = ax.twiny()
   max_x = max([len(x) for x in bar_values])
+
+  def i_to_x(i):
+    return (i*2)
+
   # print([(refresh[0]*R[0])/i for i in range(1, max_x)])
   # print([(x*2)+0.5 for x in range(1, max_x)])
   for i in range(0, len(bar_values)):
-      bar_plot = ax.bar([(x*2)+(i*(1.0/len(bar_values))) for x in range(1, len(bar_values[i]))],[(x/(sum(bar_values[i])-bar_values[i][0]))*100 for x in bar_values[i][1:]])
+    if i == 0:
+      bar_plot = ax.bar([i_to_x(x) for x in range(1, len(bar_values[i]))],[(x/(sum(bar_values[i])-bar_values[i][0]))*100 for x in bar_values[i][1:]])
+    else:
+      bar_plot = ax.bar([i_to_x(x)-0.5+(i*(1.0/len(bar_values))) for x in range(1, len(bar_values[i]))],[(x/(sum(bar_values[i])-bar_values[i][0]))*100 for x in bar_values[i][1:]])
   #theoretical curve   
   # theorical_value = []
   # myclip_a = 0
@@ -129,43 +138,59 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
 
   for i in range(0, len(bar_mean)):
     bar_mean[i] = bar_mean[i]/(len(bar_values)-1)
-  plt.plot([(x*2)+0.5 for x in range(1, max_x)], bar_mean, color='black')
+
+  plt.plot([i_to_x(i) for i in range(1, max_x)], bar_mean, color='black')
+
   # print("sum mean " +str(sum(bar_mean)))
   # Creating legend with color box
-  legend_handles.append(mpatches.Patch(color='black', label="Theorical Random \ndistribution"))
+  legend_handles.append(mpatches.Patch(color='black', label="Mean distribution"))
 
-  def pgcd(a,b):
-    if a == b:
-      return a
-    #pcgd need that a >= b
-    if a < b:
-      (a,b) = (b,a)
-    while a!=b: 
-      d=abs(b-a) 
-      b=a 
-      a=d 
-    return d
+  # def pgcd(a,b):
+  #   if a == b:
+  #     return a
+  #   #pcgd need that a >= b
+  #   if a < b:
+  #     (a,b) = (b,a)
+  #   while a!=b: 
+  #     d=abs(b-a) 
+  #     b=a 
+  #     a=d 
+  #   return d
   # plt.xticks([(x*2)+0.5 for x in range(1, max_x)], [str(i)+"\n"+str(round((refresh[0]*math.floor(R[0]/i)),2)) if R[0]>= i else str(i)+"\n"+str(round((refresh[0]/math.ceil(i/R[0])),2)) for i in range(1, max_x)])
 
-  if update_rate_s :
-    plt.xticks([(x*2)+0.5 for x in range(1, max_x)], [str(i)+"\n"+str(round((update_rate[0]*math.ceil(i/R[0])),2)) for i in range(1, max_x)]) 
-  else:
-    plt.xticks([(x*2)+0.5 for x in range(1, max_x)], [str(i)+"\n"+str(round((refresh[0]/math.ceil(i/R[0])),2)) for i in range(1, max_x)]) 
-  print([(i/(pgcd(R[0],i))) for i in range(1, max_x)])
-  # plt.xticks([(x*2)+0.5 for x in range(1, max_x)], [round(refresh[0]/(i/(pgcd(R[0],i))),2) for i in range(1, max_x)]) 
+  # if update_rate_s :
+  #   plt.xticks([(x*2)+0.5 for x in range(1, max_x)], [str(i)+"\n"+str(round((update_rate[0]*math.ceil(i/R[0])),2)) for i in range(1, max_x)]) 
+  # else:
+  #   plt.xticks([(x*2)+0.5 for x in range(1, max_x)], [str(i)+"\n"+str(round((refresh[0]/math.ceil(i/R[0])),2)) for i in range(1, max_x)]) 
+
+
+  #axis ticks and label
+  #bottom x axis
+  ax.set_xticks([i_to_x(i) for i in range(1, max_x)]) 
+  ax.set_xticklabels([str(i) for i in range(1, max_x)]) 
+  ax.set_xlabel('Tags per cells')
+
+  #top x axis
+  ax_secondary.set_xlim(ax.get_xlim())
+  # print(ax.get_xlim())
+  ax_secondary.set_xticks([i_to_x(i) for i in range(1, max_x)])
+  # print(ax.get_xticks())
+  ax_secondary.set_xticklabels([(str(round((refresh[0]/(x/2)/R[0]),3)) if x > 0 else '') for x in ax_secondary.get_xticks()])
+  ax_secondary.set_xlabel('Localisation update for each tags [Hz]')
+  #yaxis
   plt.yticks([i*10 for i in range(0, 11)]) 
-  plt.xlabel('Tags per cells \n Localisation update for each tags (s)')
   plt.ylabel('Probabibilty (\%)')
+  plt.ylim((0,100))
+
   plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   # plt.title(title)
   plt.legend(handles=legend_handles)
   plt.tight_layout()
   if savefig:
-    plt.savefig(output_file[:-4]+"3.pdf")
+    plt.savefig(output_file[:-4]+"-refresh-pos.pdf")
     plt.close()
   else:
     plt.show()
-
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
