@@ -67,6 +67,7 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
   #plot
   fig, ax = plt.subplots()
   max_x = max([len(x) for x in bar_values])
+  # print(bar_values)
   for i in range(len(bar_values)):
       bar_plot = ax.bar([(x*2)+(i*(1.0/len(bar_values))) for x in range(0, len(bar_values[i]))],[(x/sum(bar_values[i]))*100 for x in bar_values[i]])
       if i == 0:
@@ -77,7 +78,7 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
   plt.xticks([(x*2)+0.5 for x in range(0, max_x)], range(0, max_x)) 
   plt.yticks([i*10 for i in range(0, 11)]) 
   plt.xlabel('Number of tags in a cells')
-  plt.ylabel('Probabibilty')
+  plt.ylabel('Probabibilty [\%]')
   plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   plt.title(title)
   plt.legend(handles=legend_handles)
@@ -143,7 +144,7 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
 
   # print("sum mean " +str(sum(bar_mean)))
   # Creating legend with color box
-  legend_handles.append(mpatches.Patch(color='black', label="Mean distribution"))
+  legend_handles.append(mpatches.Patch(color='black', label="Mean values"))
 
   # def pgcd(a,b):
   #   if a == b:
@@ -176,13 +177,13 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
   ax_secondary.set_xticks([i_to_x(i) for i in range(1, max_x)])
   # print(ax.get_xticks())
   ax_secondary.set_xticklabels([(str(round((refresh[0]/(x/2)/R[0]),3)) if x > 0 else '') for x in ax_secondary.get_xticks()])
-  ax_secondary.set_xlabel('Localisation update for each tags [Hz]')
+  ax_secondary.set_xlabel('Localisation update for each tag [Hz]')
   #yaxis
   plt.yticks([i*10 for i in range(0, 11)]) 
-  plt.ylabel('Probabibilty (\%)')
+  ax.set_ylabel('Probabibilty [\%]')
   plt.ylim((0,100))
 
-  plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
+  ax.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   # plt.title(title)
   plt.legend(handles=legend_handles)
   plt.tight_layout()
