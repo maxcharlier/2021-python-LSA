@@ -9,3 +9,4 @@ x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch
 20,20,1,1.5,2,2,1,best,1,8,1,./result/ch8-agr1-sink1-distrib-2-seed-7/,"400 cells - Random",7
 20,20,1,1.5,2,2,1,best,1,8,1,./result/ch8-agr1-sink1-distrib-2-seed-8/,"400 cells - Random",8
 20,20,1,1.5,2,2,1,best,1,8,1,./result/ch8-agr1-sink1-distrib-2-seed-9/,"400 cells - Random",9
+20,20,1,1.5,2,2,1,best,1,8,1,./result/ch8-agr1-sink1-distrib-2-seed-10/,"400 cells - Random",10
