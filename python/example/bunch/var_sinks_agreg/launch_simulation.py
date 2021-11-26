@@ -11,6 +11,7 @@ from gen_graph_bunch import plot_slotframe_distrib
 from gen_graph_bunch import plot_slotframe_channels_usage
 from gen_graph_bunch import positionning_frequency_bars
 from gen_graph_bunch import schedule_duration_graph
+from gen_graph_bunch import plot_max_queue_size
 from export_bunch import Bunch_Parameters
 import scheduling
 import topology
@@ -186,8 +187,10 @@ curves_colors.append('0.85')
 # for file in input_params:
 #   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
 
-slot_frame_length_graph(input_params, curves_names, output_file=dir_path+"/slot_frame_length_graph_filtered.pdf", title="", yticks=range(0, 1201, 100), curves_markers=curves_markers, alpha=0.8, legendcol=3)
+# slot_frame_length_graph(input_params, curves_names, output_file=dir_path+"/slot_frame_length_graph_filtered.pdf", title="", yticks=range(0, 1201, 100), curves_markers=curves_markers, alpha=0.8, legendcol=3)
 # plot_timeslots_usage(input_params, curves_names, savefig=True, index_param=6)
-positionning_frequency_graph(input_params, curves_names, output_file=dir_path+"/positionning_frequency_filtered.pdf", title="", savefig=True, legendcol=3, curves_markers=curves_markers, alpha=0.5)
+# positionning_frequency_graph(input_params, curves_names, output_file=dir_path+"/positionning_frequency_filtered.pdf", title="", savefig=True, legendcol=3, curves_markers=curves_markers, alpha=0.5)
 # positionning_frequency_bars(dir_path + "/topology_param.csv", output_file="positionning_frequency_bars.pdf", title="", savefig=True)
-schedule_duration_graph(input_params, curves_names, output_file=dir_path+"/schedule_duration_graph_filtered.pdf", title="", curves_markers=curves_markers, alpha=0.5, legendcol=3)
+# schedule_duration_graph(input_params, curves_names, output_file=dir_path+"/schedule_duration_graph_filtered.pdf", title="", curves_markers=curves_markers, alpha=0.5, legendcol=3)
+
+plot_max_queue_size(input_params, curves_names, dir_path+"/maximum_queue_size.pdf", title="")

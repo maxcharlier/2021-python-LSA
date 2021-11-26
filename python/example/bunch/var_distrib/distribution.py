@@ -94,7 +94,7 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
 
   plt.xticks([(x*2)+0.5 for x in range(0, max_x)], range(0, max_x)) 
   plt.yticks([i*10 for i in range(0, 11)]) 
-  plt.xlabel('Number of tags in a cells')
+  plt.xlabel('Number of tags in a cell')
   plt.ylabel('Fraction of cells [\%]')
   plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   plt.title(title)
@@ -153,7 +153,7 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
   #bottom x axis
   ax.set_xticks([i_to_x(i) for i in range(1, max_x)]) 
   ax.set_xticklabels([str(i) for i in range(1, max_x)]) 
-  ax.set_xlabel('Number of tags in a cells')
+  ax.set_xlabel('Number of tags in a cell')
 
   #top x axis
   ax_secondary.set_xlim(ax.get_xlim())
@@ -161,7 +161,7 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
   ax_secondary.set_xticks([i_to_x(i) for i in range(1, max_x)])
   # print(ax.get_xticks())
   ax_secondary.set_xticklabels([(str(round((refresh[0]/(x/2)*R[0]),3)) if x > 0 else '') for x in ax_secondary.get_xticks()])
-  ax_secondary.set_xlabel('Localisation update for each tag [Hz]')
+  ax_secondary.set_xlabel('Localisation refresh for each tag [Hz]')
   #yaxis
   plt.yticks([i*10 for i in range(0, 11)]) 
   ax.set_ylabel('Fraction of tags [\%]')

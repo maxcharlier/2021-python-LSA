@@ -11,6 +11,7 @@ from gen_graph_bunch import plot_slotframe_distrib
 from gen_graph_bunch import plot_slotframe_channels_usage
 from gen_graph_bunch import positionning_frequency_bars
 from gen_graph_bunch import schedule_duration_graph
+from gen_graph_bunch import plot_max_queue_size
 from export_bunch import Bunch_Parameters
 import scheduling
 import topology
@@ -43,7 +44,8 @@ curves_names.append("440 sinks")
 #   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
 
 slot_frame_length_graph(input_params, curves_names, output_file, title="", yticks=range(0, 1201, 100))
+plot_max_queue_size(input_params, curves_names, dir_path+"/plot_max_queue_size.pdf", title="")
 # plot_timeslots_usage(input_params, curves_names, savefig=True, index_param=6)
-positionning_frequency_graph(input_params, curves_names, title="", savefig=True, legendcol=2)
+# positionning_frequency_graph(input_params, curves_names, title="", savefig=True, legendcol=2)
 # positionning_frequency_bars(dir_path + "/topology_param.csv", output_file="positionning_frequency_bars.pdf", title="", savefig=True)
 schedule_duration_graph(input_params, curves_names, dir_path+"/schedule_duration_graph.pdf", title="")

@@ -475,8 +475,8 @@ def plot_timeslot_distrib(input_csv_file, file="plot_timeslot_distrib.pdf", cumu
     # Creating legend with color box
     legend_handles.append(mpatches.Patch(color=color, label=param.disruption_range, alpha=0.7))
 
-  axs[0].set_ylabel("Total \# \nCommunications")
-  axs[1].set_ylabel("Max \n\# Communications\nOn one channel")
+  axs[0].set_ylabel("Total \# of \nTransmissions")
+  axs[1].set_ylabel("Max \# of \nTransmissions\nOn one channel")
   axs[2].set_ylabel("\# of channels \nused")
   axs[2].set_yticks(range(1, max_ch+1))
 
@@ -613,6 +613,48 @@ def positionning_frequency_bars(input_csv_file, output_file="positionning_freque
     plt.close()
   else:
     plt.show()
+
+def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_size.pdf", title="Maximum queue size", savefig=True, yticks=None, curves_markers = None, alpha=1.0, legendcol=1, curves_colors=None):
+  """Plot the maximum queue size according to the size of the network"""
+  """Generate plot graph based on the schedule stat"""
+  fig, ax1 = plt.subplots()
+  for i in range(len(input_params)):
+    queue_sizes = []
+    nb_tags = []
+    parameters = Bunch_Parameters.get_parameters_from_file(input_params[i])
+    for param in parameters:
+      stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+      topology_ = topology.Topology.import_param(param.directory + "topology_param.csv")
+      topology_.import_nodes(param.directory + "nodes.csv")
+      queue_size = scheduling.import_queue_sizes(param.directory + "schedule.csv", topology_.nodes)
+
+      queue_sizes.append(queue_size)
+      nb_tags.append(int(stat["nb_tags"]))
+      if curves_colors != None:
+        color = curves_colors[i]
+      else:
+        color= None
+    if curves_markers != None : 
+      ax1.plot(nb_tags, queue_sizes, label=curves_names[i], alpha=alpha, marker=curves_markers[i], c=color)
+    else:
+      ax1.plot(nb_tags, queue_sizes, label=curves_names[i], alpha=alpha, marker=".", c=color)
+    if curves_colors != None:
+      ax1.plot(nb_tags, queue_sizes, alpha=0.3, marker=",", linestyle='dotted', color='black')
+
+  plt.xlabel('Number of cells in the network')
+  ax1.set_ylabel('Maximum queue size during the slotframe')
+
+  plt.title(title)
+  plt.legend(ncol=legendcol)
+  ax1.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
+  if yticks !=None:
+    plt.yticks(yticks)
+
+
+  # plt.show()
+  plt.savefig(output_file)
+  plt.close()
+
 
 if __name__ == '__main__':
   gen_graphs_from_file("./example/bunch/var_agreg/")

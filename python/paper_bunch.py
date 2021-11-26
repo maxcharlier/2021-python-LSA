@@ -143,6 +143,21 @@ def update_stat_topology(param):
     print("Topology " + current_directory + " duration " + str(stat['duration']))
 
 
+def compute_queue_size(param):    
+  """
+  Import bunch parameter and compute the maximum queue of each nodes in the network during the scheudling.
+  """  
+  i = 0
+  for param in parameters:
+    print(str(param.x), str(param.y), str(param.space), str(param.comm_range), str(param.disruption_range), str(param.R), str(param.nb_tag_loc), str(param.sink_allocation), str(param.nb_sink), str(param.nb_ch), str(param.agregation), str(param.directory))
+    current_directory = param.directory
+    print("Current directory" + str(current_directory))
+    
+    schedule = scheduling.import_schedule(current_directory + "schedule.csv", topology_.nodes)
+
+    scheduling.queue_sizes(schedule)
+
+
 
 
 

@@ -311,3 +311,25 @@ def import_schedule(file, nodes):
     if(len(timeslot) > 0):
       schedule.append(timeslot)
   return schedule
+
+
+def import_queue_sizes(schedule_file, nodes):
+  """ Return the maximum queue size by looking at each link, 
+  Recommanded file name is "schedule.csv" """
+  nodes_queue = dict([(node.name, [node.type == 'anchor' and node.sink, 0, 0]) for node in nodes])
+  max_queue_size = 0
+  # max_queue_row = ""
+  with open(schedule_file) as csvfile:
+    reader = csv.DictReader(csvfile)
+    for row in reader:
+      source = nodes_queue[row['source']]
+      dest = nodes_queue[row['destination']]
+      nodes_queue[row['source']] = [source[0], source[1], source[2]-int(row['weight'])]
+      nodes_queue[row['destination']] = [dest[0], max(dest[1], dest[2]+int(row['weight'])), dest[2]+int(row['weight'])]
+      # print(str(dest) + str(nodes_queue[row['destination']]))
+      if nodes_queue[row['destination']][1] > max_queue_size and not dest[0]:
+            max_queue_size = nodes_queue[row['destination']][1]
+            # max_queue_row = row
+  # print("Maximum queue size in this schedule " +str(max_queue_size))
+  # print(str(max_queue_size) + " Max queue row "+ str(max_queue_row))
+  return max_queue_size

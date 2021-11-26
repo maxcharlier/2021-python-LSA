@@ -11,6 +11,7 @@ from gen_graph_bunch import gen_graphs_from_file
 from gen_graph_bunch import plot_slotframe_distrib
 from gen_graph_bunch import plot_slotframe_channels_usage
 from gen_graph_bunch import schedule_duration_graph
+from gen_graph_bunch import plot_max_queue_size
 from export_bunch import Bunch_Parameters
 import scheduling
 import topology
@@ -54,6 +55,7 @@ slot_frame_length_graph(input_params, curves_names, output_file, title="")
 schedule_duration_graph(input_params, curves_names, dir_path+"/schedule_duration_graph.pdf", title="")
 
 positionning_frequency_graph(input_params, curves_names, title="", savefig=True)
+plot_max_queue_size(input_params, curves_names, dir_path+"/plot_max_queue_size.pdf", title="")
 
 # plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_0.pdf", type_of_curve_index=0, cumulative=False)
 # plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_1.pdf", type_of_curve_index=1, cumulative=False)
