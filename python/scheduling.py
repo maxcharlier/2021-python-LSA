@@ -1,5 +1,6 @@
 import time
 import csv
+import math
 
 class Link():
     def __init__(self, src, dest, weight = 1):
@@ -58,12 +59,13 @@ class Link():
             return '{}'.format(self.dest.name)
 
 
-def scheduling(topology, n_ch=8, agregation=1):
+def scheduling(topology, n_ch=8, agregation=1, max_queue_size=0):
     """
     Returns the complete scheduling of the ranging measurements and their routing to the sinknode.
     :param topology: A topology object with connectivity and routing graph complete
     :param n_ch: The maximum number of channels in the scheduling. By default there is no limit.
     :param agregation: The number of ranging information than a anchor can agregate
+    :param max_queue_size: The maximum of messages than a node (other than a sink) can have in it's queue, A value of 0 or less disable the check
     :return: The scheduling matrix and the execution time in seconds
     """
     if n_ch < 0:
@@ -91,7 +93,7 @@ def scheduling(topology, n_ch=8, agregation=1):
     # print(sinks)
     # While sinks have not received all the ranging measurements from the network
     while continue_schedule(sinks):
-        matching = matching_sinks(sinks, current_slot, agregation)
+        matching = matching_sinks(sinks, current_slot, agregation, max_queue_size)
         # print("matching")
         # print(matching)
         colored = coloring(matching, n_ch)
@@ -111,7 +113,7 @@ def scheduling(topology, n_ch=8, agregation=1):
 
 
 
-def matching_sinks(sinks, slot_number, agregation):
+def matching_sinks(sinks, slot_number, agregation, max_queue_size):
     """
     Performs the matching of the graph starting by selecting the sinks with the biggest priority
     :param sinks: roots of the network
@@ -126,13 +128,13 @@ def matching_sinks(sinks, slot_number, agregation):
     while favorite_sinks:
         #order sink by the number of messages they need to receives
         i = favorite_sinks.index(max(favorite_sinks, key=lambda s: s.get_Q()-s.get_weight(None)))
-        selected += matching(favorite_sinks[i], slot_number, agregation)
+        selected += matching(favorite_sinks[i], slot_number, agregation, max_queue_size)
         favorite_sinks.remove(favorite_sinks[i])
             
 
     return selected
 
-def matching(anchor, slot_number, agregation):
+def matching(anchor, slot_number, agregation, max_queue_size):
     """
     Performs the matching of the tree graph
     :param anchor: The root of the sub-tree
@@ -142,24 +144,27 @@ def matching(anchor, slot_number, agregation):
     #check if the node have childrens
     if anchor.childrens:
         children = list(anchor.childrens)
-        #children is listed if 
-        # - they are anchor and they have a queue bigger or equals to the agregation or the queue equals the global queue of the node  
-        # or if they are a tag and have message to send to the anchor.
-        favorite_children = [c for c in children if ((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= agregation or c.get_weight(anchor) == c.get_Q())) or c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number]
-        #if we have a favorite children we create the link with the best one and add this children to the childre list.
-        if favorite_children:
-            i = favorite_children.index(max(favorite_children, key=lambda c: c.get_Q()))
-            selected += [favorite_children[i]]
-            children.remove(favorite_children[i])
-            favorite_children[i].set_slot_number(slot_number) #avoid selecting a node two times
-            if(favorite_children[i].type == 'anchor'):
-                children += list(favorite_children[i].childrens)
-            favorite_children[i].set_link(Link(favorite_children[i], anchor, min(favorite_children[i].get_weight(anchor), agregation)))
+        # Check if the queue of anchor is less than max queue size or if it is a sink.
+        # In this case anchor can receive message from one of it's children.
+        if max_queue_size <= 0 or (anchor.current_weight <= max_queue_size) or anchor.sink:
+            #children is listed if 
+            # - they are anchor and they have a queue bigger or equals to the agregation or the queue equals the global queue of the node  
+            # or if they are a tag and have message to send to the anchor.
+            favorite_children = [c for c in children if ((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= agregation or c.get_weight(anchor) == c.get_Q())) or c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number]
+            #if we have a favorite children we create the link with the best one and add this children to the childre list.
+            if favorite_children:
+                i = favorite_children.index(max(favorite_children, key=lambda c: c.get_Q()))
+                selected += [favorite_children[i]]
+                children.remove(favorite_children[i])
+                favorite_children[i].set_slot_number(slot_number) #avoid selecting a node two times
+                if(favorite_children[i].type == 'anchor'):
+                    children += list(favorite_children[i].childrens)
+                favorite_children[i].set_link(Link(favorite_children[i], anchor, min(favorite_children[i].get_weight(anchor), agregation)))
 
         for child in children:
             #we only perform the recursive call on anchors
             if child.type == 'anchor':
-                selected += matching(child, slot_number, agregation)
+                selected += matching(child, slot_number, agregation, max_queue_size)
 
     return selected
 
@@ -313,7 +318,7 @@ def import_schedule(file, nodes):
   return schedule
 
 
-def import_queue_sizes(schedule_file, nodes):
+def import_queue_sizes(schedule_file, nodes, agregation=1):
   """ Return the maximum queue size by looking at each link, 
   Recommanded file name is "schedule.csv" """
   nodes_queue = dict([(node.name, [node.type == 'anchor' and node.sink, 0, 0]) for node in nodes])
@@ -332,4 +337,5 @@ def import_queue_sizes(schedule_file, nodes):
             # max_queue_row = row
   # print("Maximum queue size in this schedule " +str(max_queue_size))
   # print(str(max_queue_size) + " Max queue row "+ str(max_queue_row))
+  # return math.ceil(max_queue_size/agregation)
   return max_queue_size

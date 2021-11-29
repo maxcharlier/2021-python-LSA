@@ -236,8 +236,20 @@ class Topology():
       #check if we have a path to the sink for all anchors
       if node.type == 'anchor' and not node.sink and node.parent == None:
         return False
+    self.filter_unused_anchors()
     return True
 
+  def filter_unused_anchors(self):
+    #filter unused anchors
+    nb_anchors = len(self.nodes)
+    i = 0
+    while(i < nb_anchors):
+      if self.nodes[i].type == 'anchor' and self.nodes[i].get_Q() == 0:
+        #unused anchors
+        self.nodes.remove(self.nodes[i])
+        nb_anchors = nb_anchors-1
+      else:
+        i += 1
 
   def export_connectivity(self, file):
     """Recommanded file name is "connectivity.csv" """

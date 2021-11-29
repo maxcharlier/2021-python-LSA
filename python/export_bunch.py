@@ -51,6 +51,7 @@ class Bunch_Parameters():
     self.dist_sink = 0
     self.name = None
     self.seed = 0
+    self.max_queue = 0
 
   def set_dist_sink(self, dist_sink):
     self.dist_sink = dist_sink
@@ -61,6 +62,9 @@ class Bunch_Parameters():
   def set_seed(self, seed):
     """Define the seed generator for a randomized uniform distribution of tag in the network"""
     self.seed = seed
+  def set_max_queue(self, max_queue):
+    """Define the maximum number of message than a node (other than a sink) can store in it's queue"""
+    self.max_queue = max_queue
 
   def export_toplogy_param(parameters, file="toplogy_param.csv"):
     """Recommanded file name is "toplogy_param.csv" """
@@ -86,6 +90,8 @@ class Bunch_Parameters():
           parameters[-1].set_name(str(row['name']))
         if "seed" in row.keys():
           parameters[-1].set_seed(int(row['seed']))
+        if "max_queue" in row.keys():
+          parameters[-1].set_max_queue(int(row['max_queue']))
     return parameters
   
   def get_str_variable_1_parameter(parameters):
@@ -277,7 +283,7 @@ def gen_topology(parameters, plot_graph=True):
         graphics.plot_Q(topology_.nodes, current_directory + "plot_Q.pdf")
         graphics.dot_network_routing(topology_.nodes, current_directory + "dot_network_routing.dot")
 
-      (schedule, duration) = scheduling.scheduling(topology_, n_ch=param.nb_ch, agregation=param.agregation)
+      (schedule, duration) = scheduling.scheduling(topology_, n_ch=param.nb_ch, agregation=param.agregation, max_queue_size=param.max_queue)
 
       topology_.export_param(current_directory + "topology_param.csv")
       topology_.export_nodes(current_directory + "nodes.csv")

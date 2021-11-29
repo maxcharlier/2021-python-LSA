@@ -142,6 +142,8 @@ def plot_path_length(param_best, param_worst, output_file="path_length.pdf", sav
   Worst when the sink is in a corner"""
 
   fig, axs = plt.subplots(2)
+  legend_handles = []
+
   def boxplot(parameter_file, axis, title):
     nb_hops = []
     nb_cells = []
@@ -211,6 +213,12 @@ def plot_path_length(param_best, param_worst, output_file="path_length.pdf", sav
     axis.set_ylabel('Path length')
   boxplot(param_best, axs[0], "Sink in the center")
   boxplot(param_worst, axs[1], "Sink in a corner")
+  
+  # Creating legend for the means curve
+  legend_handles = []
+  legend_handles.append(Line2D([0], [0], color='tab:grey', label="Means", linestyle='--'))
+  axs[0].legend(handles=legend_handles, loc="lower right", bbox_to_anchor=(1, 1.04))
+
   plt.xticks(range(0, 401, 50), range(0, 401, 50), rotation=0)
   plt.xlabel('Number of cells of the network')
   # plt.xlim(-10, 410)
@@ -626,7 +634,7 @@ def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_
       stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
       topology_ = topology.Topology.import_param(param.directory + "topology_param.csv")
       topology_.import_nodes(param.directory + "nodes.csv")
-      queue_size = scheduling.import_queue_sizes(param.directory + "schedule.csv", topology_.nodes)
+      queue_size = scheduling.import_queue_sizes(param.directory + "schedule.csv", topology_.nodes, param.agregation)
 
       queue_sizes.append(queue_size)
       nb_tags.append(int(stat["nb_tags"]))
