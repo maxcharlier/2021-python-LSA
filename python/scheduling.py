@@ -150,7 +150,7 @@ def matching(anchor, slot_number, agregation, max_queue_size):
             #children is listed if 
             # - they are anchor and they have a queue bigger or equals to the agregation or the queue equals the global queue of the node  
             # or if they are a tag and have message to send to the anchor.
-            favorite_children = [c for c in children if ((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= agregation or c.get_weight(anchor) == c.get_Q())) or c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number and (max_queue_size <= 0 or (anchor.current_weight+c.get_weight(anchor) <= max_queue_size) or anchor.sink)]
+            favorite_children = [c for c in children if ((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= agregation or c.get_weight(anchor) == c.get_Q())) or c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number]
             #if we have a favorite children we create the link with the best one and add this children to the childre list.
             if favorite_children:
                 i = favorite_children.index(max(favorite_children, key=lambda c: c.get_Q()))
