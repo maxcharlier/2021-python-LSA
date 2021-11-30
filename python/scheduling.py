@@ -146,7 +146,7 @@ def matching(anchor, slot_number, agregation, max_queue_size):
         children = list(anchor.childrens)
         # Check if the queue of anchor is less than max queue size or if it is a sink.
         # In this case anchor can receive message from one of it's children.
-        if max_queue_size <= 0 or (anchor.current_weight < max_queue_size) or anchor.sink:
+        if max_queue_size <= 0 or (anchor.current_weight <= max_queue_size) or anchor.sink:
             #children is listed if 
             # - they are anchor and they have a queue bigger or equals to the agregation or the queue equals the global queue of the node  
             # or if they are a tag and have message to send to the anchor.
