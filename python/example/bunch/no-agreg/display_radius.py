@@ -35,12 +35,6 @@ def display_table_parameters(input_params):
       print("\\\\")
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-print(dir_path)
-input_params = []
-curves_names = []
 
-
-input_params.append(dir_path + "/ch4-agr1.csv")
-curves_names.append("4 Channels")
-
-display_table_parameters(input_params)
+display_table_parameters([dir_path + "/ch1-agr1.csv"])
+display_table_parameters([dir_path + "/ch1-agr1-worst.csv"])

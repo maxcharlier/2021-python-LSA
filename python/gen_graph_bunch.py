@@ -214,10 +214,10 @@ def plot_path_length(param_best, param_worst, output_file="path_length.pdf", sav
   boxplot(param_best, axs[0], "Sink in the center")
   boxplot(param_worst, axs[1], "Sink in a corner")
   
-  # Creating legend for the means curve
-  legend_handles = []
-  legend_handles.append(Line2D([0], [0], color='tab:grey', label="Means", linestyle='--'))
-  axs[0].legend(handles=legend_handles, loc="lower right", bbox_to_anchor=(1, 1.04))
+  # # Creating legend for the means curve
+  # legend_handles = []
+  # legend_handles.append(Line2D([0], [0], color='tab:grey', label="Means", linestyle='--'))
+  # axs[0].legend(handles=legend_handles, loc="lower right", bbox_to_anchor=(1, 1.04))
 
   plt.xticks(range(0, 401, 50), range(0, 401, 50), rotation=0)
   plt.xlabel('Number of cells of the network')
@@ -274,34 +274,44 @@ def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_
     print((mx, mx*factor))
     # ax1.set_ylim(0, mx)
     ax2.set_ylim(mn*factor, mx*factor)
-    ax2.set_ylabel("Slotframe druation (s) at 6.8 Mb/s")
+    ax2.set_ylabel("Slotframe duration (s) at 6.8 Mb/s")
 
 
   # plt.show()
   plt.savefig(output_file)
   plt.close()
 
-def schedule_duration_graph(input_params, curves_names, output_file="schedule_duration_graph.pdf", title="Computation duration of the Scheduling", yticks=None, curves_markers = None, alpha=1.0, legendcol=1, curves_colors=None):
+def schedule_duration_graph(input_params, curves_names, output_file="schedule_duration_graph.pdf", title="Computation duration of the Scheduling", yticks=None, curves_markers = None, alpha=1.0, legendcol=1, curves_colors=None, repeat=1):
   """Generate plot graph based on the schedule stat"""
   fig, ax1 = plt.subplots()
   for i in range(len(input_params)):
-    len_schedule = []
+    durations = []
     nb_tags = []
     parameters = Bunch_Parameters.get_parameters_from_file(input_params[i])
     for param in parameters:
-      stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
-      len_schedule.append(float(stat["duration"]))
-      nb_tags.append(int(stat["nb_tags"]))
+      duration =0
+      nb_tag = 0
+      for repeat_i in range(repeat):
+        if repeat_i > 0 :
+          current_directory = param.directory.replace("result", "result"+str(repeat_i))
+        else:
+          current_directory = param.directory
+        stat = scheduling.import_schedule_stat(current_directory + "schedule_stat.csv")
+        duration += float(stat["duration"])
+        nb_tag = int(stat["nb_tags"])
+        print("nb_tag "+str(nb_tag) + " duration " + str(duration))
+      durations.append(duration/repeat)
+      nb_tags.append(nb_tag)
     if curves_colors != None:
       color = curves_colors[i]
     else:
       color= None
     if curves_markers != None : 
-      ax1.plot(nb_tags, len_schedule, label=curves_names[i], alpha=alpha, marker=curves_markers[i], c=color)
+      ax1.plot(nb_tags, durations, label=curves_names[i], alpha=alpha, marker=curves_markers[i], c=color)
     else:
-      ax1.plot(nb_tags, len_schedule, label=curves_names[i], alpha=alpha, marker=".", c=color)
+      ax1.plot(nb_tags, durations, label=curves_names[i], alpha=alpha, marker=".", c=color)
     if curves_colors != None:
-      ax1.plot(nb_tags, len_schedule, alpha=0.3, marker=",", linestyle='dotted', color='black')
+      ax1.plot(nb_tags, durations, alpha=0.3, marker=",", linestyle='dotted', color='black')
   plt.xlabel('Number of cells in the network')
   ax1.set_ylabel('Computation duration of the Scheduling (s)')
 
@@ -425,7 +435,7 @@ def plot_slotframe_distrib(input_csv_file, file="plot_slotframe_stepdistrib.pdf"
   plt.savefig(file)
   plt.close()
 
-def plot_timeslot_distrib(input_csv_file, file="plot_timeslot_distrib.pdf", cumulative=True, title="", max_ch=8, uniform_X_axis = True):
+def plot_timeslot_distrib(input_csv_file, file="plot_timeslot_distrib.pdf", cumulative=True, title="", max_ch=8, uniform_X_axis = True, legend="Disruption"):
   """ Plot the number of communications per timeslot"""
 
   fig, axs = plt.subplots(3)
@@ -480,8 +490,12 @@ def plot_timeslot_distrib(input_csv_file, file="plot_timeslot_distrib.pdf", cumu
     axs[1].plot(x, max_comm, linestyle='solid', marker=marker, markersize=0.5, alpha=0.7, linewidth=linewidth, color=color)
     axs[2].plot(x, nb_channel, linestyle='solid', marker=marker, markersize=0.5, alpha=0.7, color=color, linewidth=linewidth)
 
-    # Creating legend with color box
-    legend_handles.append(mpatches.Patch(color=color, label=param.disruption_range, alpha=0.7))
+    if legend == "Disruption":
+      # Creating legend with color box
+      legend_handles.append(mpatches.Patch(color=color, label=param.disruption_range, alpha=0.7))
+    elif legend == "Channel":
+      # Creating legend with color box
+      legend_handles.append(mpatches.Patch(color=color, label=param.nb_ch, alpha=0.7))
 
   axs[0].set_ylabel("Total \# of \nTransmissions")
   axs[1].set_ylabel("Max \# of \nTransmissions\nOn one channel")
@@ -501,7 +515,11 @@ def plot_timeslot_distrib(input_csv_file, file="plot_timeslot_distrib.pdf", cumu
 
   if len(title) >0:
     axs[0].set_title(title)
-  axs[0].legend(title="Disruption range :", ncol=3, handles=legend_handles)
+  if legend == "Disruption":
+    axs[0].legend(title="Disruption range :", ncol=3, handles=legend_handles)
+  elif legend == "Channel":
+    axs[0].legend(title="Number of channels :", ncol=3, handles=legend_handles)
+
   # plt.tight_layout()
   plt.savefig(file)
   # plt.savefig(file, format='jpeg')
@@ -662,6 +680,7 @@ def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_
   # plt.show()
   plt.savefig(output_file)
   plt.close()
+      
 
 
 if __name__ == '__main__':

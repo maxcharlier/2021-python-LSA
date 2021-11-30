@@ -11,6 +11,7 @@ from gen_graph_bunch import gen_graphs_from_file
 from gen_graph_bunch import plot_slotframe_distrib
 from gen_graph_bunch import plot_slotframe_channels_usage
 from gen_graph_bunch import schedule_duration_graph
+from gen_graph_bunch import plot_timeslot_distrib
 from gen_graph_bunch import plot_max_queue_size
 from export_bunch import Bunch_Parameters
 import scheduling
@@ -67,3 +68,4 @@ plot_max_queue_size(input_params, curves_names, dir_path+"/plot_max_queue_size.p
 # plot_slotframe_distrib(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_distrib_cumulative_3.pdf", type_of_curve_index=3, cumulative=True)
 # plot_slotframe_channels_usage(dir_path + "/plot_slotframe_distrib.csv", file="plot_slotframe_channels_usage.pdf", nb_channel_max=8, cumulative=True)
 
+plot_timeslot_distrib(dir_path + "/timeslot_distribution_channel.csv", file="timeslot_distribution_channel_400_cells.pdf", max_ch=8, uniform_X_axis=False, legend="Channel")

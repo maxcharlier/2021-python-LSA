@@ -149,151 +149,154 @@ class Bunch_Parameters():
         
 
 
-def gen_topology(parameters, plot_graph=True):    
+def gen_topology(parameters, plot_graph=True, repeat=1):    
   """
   Generate a bunch of topology
   :param param a Bunch_Parameters object
   """
   i = 0
-  for param in parameters:
-    print(str(param.x), str(param.y), str(param.space), str(param.comm_range), str(param.disruption_range), str(param.R), str(param.nb_tag_loc), str(param.sink_allocation), str(param.nb_sink), str(param.nb_ch), str(param.agregation), str(param.directory))
+  for repeat_i in range(repeat):
+    for param in parameters:
+      print(str(param.x), str(param.y), str(param.space), str(param.comm_range), str(param.disruption_range), str(param.R), str(param.nb_tag_loc), str(param.sink_allocation), str(param.nb_sink), str(param.nb_ch), str(param.agregation), str(param.directory))
 
-    topology_ = topology.Topology(param.x, param.y, param.space, param.comm_range, param.disruption_range, param.R, param.nb_tag_loc)
-    
-    (anchors, tags) = topology_.generate_nodes(param.seed)
+      topology_ = topology.Topology(param.x, param.y, param.space, param.comm_range, param.disruption_range, param.R, param.nb_tag_loc)
+      
+      (anchors, tags) = topology_.generate_nodes(param.seed)
 
-    #ref_filtering_node define the node used has reference point to filter tags with distance
-    #by default it is in the center, but it's place change when using "Worst" position of sink
-    ref_filtering_node = anchors[math.floor(len(anchors)/2)]
-    if param.sink_allocation == SINK_BEST:
-      if param.nb_sink == 1:
-        # add sink to the center
-        node = anchors[math.floor(len(anchors)/2)]
-        topology_.set_sink(node)
-        node.set_as_sink(True)
-      if param.nb_sink == 2:
-        selected_nodes = []
-        selected_nodes.append(topology_.node_search(Point(math.floor(param.x/4)*param.space, math.floor(param.y/4)*param.space), anchors))
-        selected_nodes.append(topology_.node_search(Point(math.floor(param.x/4)*param.space*3, math.floor(param.y/4)*param.space*3), anchors))
-        for node in selected_nodes:
+      #ref_filtering_node define the node used has reference point to filter tags with distance
+      #by default it is in the center, but it's place change when using "Worst" position of sink
+      ref_filtering_node = anchors[math.floor(len(anchors)/2)]
+      if param.sink_allocation == SINK_BEST:
+        if param.nb_sink == 1:
+          # add sink to the center
+          node = anchors[math.floor(len(anchors)/2)]
           topology_.set_sink(node)
           node.set_as_sink(True)
-      if param.nb_sink == 3:
-        sinks = []
-        sinks.append(topology_.node_search(Point(math.floor(param.x/2)*param.space, math.floor(param.y/4)*param.space), anchors))
-        sinks.append(topology_.node_search(Point(math.floor(param.x/4)*param.space, math.floor(param.y/3)*param.space*2), anchors))
-        sinks.append(topology_.node_search(Point((math.floor(param.x/4)*param.space)*3, math.floor(param.y/3)*param.space*2), anchors))
-        for sink in sinks:
-          topology_.set_sink(sink)
-          sink.set_as_sink(True)
-        # for i in range(1, 3):
-        #   node = anchors[math.floor((len(anchors)/3)*i)]
-        #   topology_.set_sink(node)
-        #   node.set_as_sink(True)
-      if param.nb_sink == 4:
-        node = anchors[math.floor(len(anchors)/5)]
-        selected_nodes = topology_.anchors_node_search(node, anchors)
-        for node in selected_nodes:
-          topology_.set_sink(node)
-          node.set_as_sink(True)
-      if param.nb_sink == 5:
-        node = anchors[math.floor(len(anchors)/5)]
-        selected_nodes = topology_.anchors_node_search(node, anchors)
-        selected_nodes.append(anchors[math.floor(len(anchors)/2)])
-        topology_.set_sink(node)
-        node.set_as_sink(True)
-        for node in selected_nodes:
-          topology_.set_sink(node)
-          node.set_as_sink(True)
-      if param.nb_sink == 9:
-        node = topology_.node_search(Point(math.floor(param.x/6)*param.space, math.floor(param.y/6)*param.space), anchors)
-        selected_nodes = topology_.anchors_node_search(node, anchors)
-        #node in the center
-        selected_nodes.append(anchors[math.floor(len(anchors)/2)])
-
-        node = topology_.node_search(Point(math.floor(param.x/2)*param.space, math.floor(param.y/6)*param.space), anchors)
-        selected_nodes += topology_.anchors_node_search(node, anchors)
-        node = topology_.node_search(Point(math.floor(param.x/6)*param.space, math.floor(param.y/2)*param.space), anchors)
-        selected_nodes += topology_.anchors_node_search(node, anchors)
-
-        for node in selected_nodes:
-          topology_.set_sink(node)
-          node.set_as_sink(True)
-      if param.nb_sink == 18:
-
-        for i in range(0, 3):
-          for j in range(0,3):
-            x = round((param.x/13)*(param.space*(i*4)+1))
-            y = round((param.y/13)*(param.space*(j*4)+3))
-            # print("i " + str(i) + "j " + str(j) + "x " + str(x) + "y " + str(y))
-            node = topology_.node_search(Point(x, y), anchors)
+        if param.nb_sink == 2:
+          selected_nodes = []
+          selected_nodes.append(topology_.node_search(Point(math.floor(param.x/4)*param.space, math.floor(param.y/4)*param.space), anchors))
+          selected_nodes.append(topology_.node_search(Point(math.floor(param.x/4)*param.space*3, math.floor(param.y/4)*param.space*3), anchors))
+          for node in selected_nodes:
             topology_.set_sink(node)
             node.set_as_sink(True)
-            x = round((param.x/13)*(param.space*(i*4)+3))
-            y = round((param.y/13)*(param.space*(j*4)+1))
-            # print("i " + str(i) + "j " + str(j) + "x " + str(x) + "y " + str(y))
-            node = topology_.node_search(Point(x, y), anchors)
+        if param.nb_sink == 3:
+          sinks = []
+          sinks.append(topology_.node_search(Point(math.floor(param.x/2)*param.space, math.floor(param.y/4)*param.space), anchors))
+          sinks.append(topology_.node_search(Point(math.floor(param.x/4)*param.space, math.floor(param.y/3)*param.space*2), anchors))
+          sinks.append(topology_.node_search(Point((math.floor(param.x/4)*param.space)*3, math.floor(param.y/3)*param.space*2), anchors))
+          for sink in sinks:
+            topology_.set_sink(sink)
+            sink.set_as_sink(True)
+          # for i in range(1, 3):
+          #   node = anchors[math.floor((len(anchors)/3)*i)]
+          #   topology_.set_sink(node)
+          #   node.set_as_sink(True)
+        if param.nb_sink == 4:
+          node = anchors[math.floor(len(anchors)/5)]
+          selected_nodes = topology_.anchors_node_search(node, anchors)
+          for node in selected_nodes:
             topology_.set_sink(node)
             node.set_as_sink(True)
-    elif param.sink_allocation == SINK_WORST:
-      ref_filtering_node = anchors[0]
-      topology_.set_sink(anchors[0])
-      anchors[0].set_as_sink(True)
-    elif param.sink_allocation == SINK_RANDOM:
-      random_anchor = anchors[random.randint(0, len(anchors))]
-      topology_.set_sink(random_anchor)
-      random_anchor.set_as_sink(True)
-    elif param.sink_allocation == SINK_ALL:
-      for node in anchors:
-        topology_.set_sink(node)
-        node.set_as_sink(True)
-    else:
-      raise Exception("Sink position parameter have an unsupported value " + str(param.sink_allocation))
+        if param.nb_sink == 5:
+          node = anchors[math.floor(len(anchors)/5)]
+          selected_nodes = topology_.anchors_node_search(node, anchors)
+          selected_nodes.append(anchors[math.floor(len(anchors)/2)])
+          topology_.set_sink(node)
+          node.set_as_sink(True)
+          for node in selected_nodes:
+            topology_.set_sink(node)
+            node.set_as_sink(True)
+        if param.nb_sink == 9:
+          node = topology_.node_search(Point(math.floor(param.x/6)*param.space, math.floor(param.y/6)*param.space), anchors)
+          selected_nodes = topology_.anchors_node_search(node, anchors)
+          #node in the center
+          selected_nodes.append(anchors[math.floor(len(anchors)/2)])
 
-    current_directory = param.directory
+          node = topology_.node_search(Point(math.floor(param.x/2)*param.space, math.floor(param.y/6)*param.space), anchors)
+          selected_nodes += topology_.anchors_node_search(node, anchors)
+          node = topology_.node_search(Point(math.floor(param.x/6)*param.space, math.floor(param.y/2)*param.space), anchors)
+          selected_nodes += topology_.anchors_node_search(node, anchors)
 
-    if param.dist_sink > 0:
-      print("filter tags " + str(param.dist_sink))
-      tags = topology.Topology.filter_tags(tags, ref_filtering_node, param.dist_sink)
-      # print(tags)
+          for node in selected_nodes:
+            topology_.set_sink(node)
+            node.set_as_sink(True)
+        if param.nb_sink == 18:
+
+          for i in range(0, 3):
+            for j in range(0,3):
+              x = round((param.x/13)*(param.space*(i*4)+1))
+              y = round((param.y/13)*(param.space*(j*4)+3))
+              # print("i " + str(i) + "j " + str(j) + "x " + str(x) + "y " + str(y))
+              node = topology_.node_search(Point(x, y), anchors)
+              topology_.set_sink(node)
+              node.set_as_sink(True)
+              x = round((param.x/13)*(param.space*(i*4)+3))
+              y = round((param.y/13)*(param.space*(j*4)+1))
+              # print("i " + str(i) + "j " + str(j) + "x " + str(x) + "y " + str(y))
+              node = topology_.node_search(Point(x, y), anchors)
+              topology_.set_sink(node)
+              node.set_as_sink(True)
+      elif param.sink_allocation == SINK_WORST:
+        ref_filtering_node = anchors[0]
+        topology_.set_sink(anchors[0])
+        anchors[0].set_as_sink(True)
+      elif param.sink_allocation == SINK_RANDOM:
+        random_anchor = anchors[random.randint(0, len(anchors))]
+        topology_.set_sink(random_anchor)
+        random_anchor.set_as_sink(True)
+      elif param.sink_allocation == SINK_ALL:
+        for node in anchors:
+          topology_.set_sink(node)
+          node.set_as_sink(True)
+      else:
+        raise Exception("Sink position parameter have an unsupported value " + str(param.sink_allocation))
+      if repeat_i > 0 :
+        current_directory = param.directory.replace("result", "result"+str(repeat_i))
+      else:
+        current_directory = param.directory
+
+      if param.dist_sink > 0:
+        print("filter tags " + str(param.dist_sink))
+        tags = topology.Topology.filter_tags(tags, ref_filtering_node, param.dist_sink)
+        # print(tags)
 
 
-    print("Current directory" + str(current_directory))
+      print("Current directory" + str(current_directory))
 
-    topology_.generate_neighbourhood(anchors, tags)
+      topology_.generate_neighbourhood(anchors, tags)
 
-    try:
-        os.makedirs(current_directory)
-    except OSError:
-        print ("Creation of the directory %s failed" % current_directory)
-    else:
-        print ("Successfully created the directory %s" % current_directory)
+      try:
+          os.makedirs(current_directory)
+      except OSError:
+          print ("Creation of the directory %s failed" % current_directory)
+      else:
+          print ("Successfully created the directory %s" % current_directory)
 
-    topology_.set_nodes(anchors, tags)
-    if plot_graph:
-      graphics.plot_neighbours(topology_.nodes, current_directory + "plot_neighbours.pdf")
-    
-    if(topology_.generate_routing()):
-      print("Routing generated")
-      # topology_.print_sinks_Q()
-      graphics.plot_sinks_Q(topology_.sinks, current_directory + "plot_sinks_Q.pdf")
-      if plot_graph: 
-        graphics.plot_C(topology_.nodes, current_directory + "graph-C.pdf")
-        graphics.plot_network_routing(topology_.nodes, current_directory + "plot_network_routing.pdf")
-        graphics.plot_Q(topology_.nodes, current_directory + "plot_Q.pdf")
-        graphics.dot_network_routing(topology_.nodes, current_directory + "dot_network_routing.dot")
+      topology_.set_nodes(anchors, tags)
+      if plot_graph:
+        graphics.plot_neighbours(topology_.nodes, current_directory + "plot_neighbours.pdf")
+      
+      if(topology_.generate_routing()):
+        print("Routing generated")
+        # topology_.print_sinks_Q()
+        graphics.plot_sinks_Q(topology_.sinks, current_directory + "plot_sinks_Q.pdf")
+        if plot_graph: 
+          graphics.plot_C(topology_.nodes, current_directory + "graph-C.pdf")
+          graphics.plot_network_routing(topology_.nodes, current_directory + "plot_network_routing.pdf")
+          graphics.plot_Q(topology_.nodes, current_directory + "plot_Q.pdf")
+          graphics.dot_network_routing(topology_.nodes, current_directory + "dot_network_routing.dot")
 
-      (schedule, duration) = scheduling.scheduling(topology_, n_ch=param.nb_ch, agregation=param.agregation, max_queue_size=param.max_queue)
+        (schedule, duration) = scheduling.scheduling(topology_, n_ch=param.nb_ch, agregation=param.agregation, max_queue_size=param.max_queue)
 
-      topology_.export_param(current_directory + "topology_param.csv")
-      topology_.export_nodes(current_directory + "nodes.csv")
-      topology_.export_connectivity(current_directory + "connectivity.csv")
-      topology_.export_routing(current_directory + "routing.csv")
-      scheduling.export_schedule(schedule, current_directory + "schedule.csv")
-      scheduling.export_schedule_stat(duration, schedule, topology_, current_directory + "schedule_stat.csv")
-      print("Topology " + current_directory + " duration " + str(duration))
-    else:
-      print("No all anchors have a path to the sinks.")
+        topology_.export_param(current_directory + "topology_param.csv")
+        topology_.export_nodes(current_directory + "nodes.csv")
+        topology_.export_connectivity(current_directory + "connectivity.csv")
+        topology_.export_routing(current_directory + "routing.csv")
+        scheduling.export_schedule(schedule, current_directory + "schedule.csv")
+        scheduling.export_schedule_stat(duration, schedule, topology_, current_directory + "schedule_stat.csv")
+        print("Topology " + current_directory + " duration " + str(duration))
+      else:
+        print("No all anchors have a path to the sinks.")
     
 
 def update_stat_topology(param):    

@@ -23,7 +23,7 @@ curves_names.append("1 Channel Worst")
 input_params.append(dir_path + "/ch1-agr1.csv")
 curves_names.append("1 Channel")
 
-# for file in input_params:
-#   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
+for file in input_params:
+  gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
 
-plot_path_length(dir_path + "/ch1-agr1.csv", dir_path + "/ch1-agr1-worst.csv", savefig=True,  output_file="path_length.pdf")
+plot_path_length(dir_path + "/ch1-agr1.csv", dir_path + "/ch1-agr1-worst.csv", savefig=True,  output_file="path_length2.pdf")

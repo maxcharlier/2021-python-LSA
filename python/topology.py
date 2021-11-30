@@ -246,10 +246,17 @@ class Topology():
     while(i < nb_anchors):
       if self.nodes[i].type == 'anchor' and self.nodes[i].get_Q() == 0:
         #unused anchors
-        self.nodes.remove(self.nodes[i])
+        unused_anchor = self.nodes[i]
+        self.nodes.remove(unused_anchor)
+        for node in self.nodes:
+          if unused_anchor in node.neighbours:
+            node.neighbours.remove(unused_anchor)
+          if unused_anchor in node.disrupted_nodes:
+            node.disrupted_nodes.remove(unused_anchor)
         nb_anchors = nb_anchors-1
       else:
         i += 1
+
 
   def export_connectivity(self, file):
     """Recommanded file name is "connectivity.csv" """
