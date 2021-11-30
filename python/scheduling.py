@@ -146,19 +146,20 @@ def matching(anchor, slot_number, agregation, max_queue_size):
         children = list(anchor.childrens)
         # Check if the queue of anchor is less than max queue size or if it is a sink.
         # In this case anchor can receive message from one of it's children.
-        #children is listed if 
-        # - they are anchor and they have a queue bigger or equals to the agregation or the queue equals the global queue of the node  
-        # or if they are a tag and have message to send to the anchor.
-        favorite_children = [c for c in children if ((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= agregation or c.get_weight(anchor) == c.get_Q())) or c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number and (max_queue_size <= 0 or (anchor.current_weight+c.get_weight(anchor) <= max_queue_size) or anchor.sink)]
-        #if we have a favorite children we create the link with the best one and add this children to the childre list.
-        if favorite_children:
-            i = favorite_children.index(max(favorite_children, key=lambda c: c.get_Q()))
-            selected += [favorite_children[i]]
-            children.remove(favorite_children[i])
-            favorite_children[i].set_slot_number(slot_number) #avoid selecting a node two times
-            if(favorite_children[i].type == 'anchor'):
-                children += list(favorite_children[i].childrens)
-            favorite_children[i].set_link(Link(favorite_children[i], anchor, min(favorite_children[i].get_weight(anchor), agregation)))
+        if max_queue_size <= 0 or (anchor.current_weight < max_queue_size) or anchor.sink:
+            #children is listed if 
+            # - they are anchor and they have a queue bigger or equals to the agregation or the queue equals the global queue of the node  
+            # or if they are a tag and have message to send to the anchor.
+            favorite_children = [c for c in children if ((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= agregation or c.get_weight(anchor) == c.get_Q())) or c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number and (max_queue_size <= 0 or (anchor.current_weight+c.get_weight(anchor) <= max_queue_size) or anchor.sink)]
+            #if we have a favorite children we create the link with the best one and add this children to the childre list.
+            if favorite_children:
+                i = favorite_children.index(max(favorite_children, key=lambda c: c.get_Q()))
+                selected += [favorite_children[i]]
+                children.remove(favorite_children[i])
+                favorite_children[i].set_slot_number(slot_number) #avoid selecting a node two times
+                if(favorite_children[i].type == 'anchor'):
+                    children += list(favorite_children[i].childrens)
+                favorite_children[i].set_link(Link(favorite_children[i], anchor, min(favorite_children[i].get_weight(anchor), agregation)))
 
         for child in children:
             #we only perform the recursive call on anchors
