@@ -737,7 +737,7 @@ def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_
       stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
       topology_ = topology.Topology.import_param(param.directory + "topology_param.csv")
       topology_.import_nodes(param.directory + "nodes.csv")
-      queue_size = scheduling.import_queue_sizes(param.directory + "schedule.csv", topology_.nodes, param.agregation)
+      queue_size = scheduling.import_queue_sizes(param.directory + "schedule.csv", topology_.nodes, param.aggregation)
 
       queue_sizes.append(queue_size)
       nb_tags.append(int(stat["nb_tags"]))

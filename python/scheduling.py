@@ -73,6 +73,9 @@ def scheduling(topology, n_ch=8, aggregation=1, max_queue_size=0):
     elif n_ch == 0:
         return []
 
+    if max_queue_size > 0 and aggregation >= max_queue_size:
+        raise Exception("The aggreagtion value is too big compare to the maximum queue size")
+
     if aggregation < 1 :
         raise Exception("Anchor need to be able to send at least one message (aggregation >=1)")
 
@@ -143,14 +146,17 @@ def matching(anchor, slot_number, aggregation, max_queue_size):
     selected = []
     #check if the node have childrens
     if anchor.childrens:
-        children = list(anchor.childrens)
+        children = [c for c in anchor.childrens if(c.get_Q() > 0)]
         # Check if the queue of anchor is less than max queue size or if it is a sink.
         # In this case anchor can receive message from one of it's children.
         
         #children is listed if 
         # - they are anchor and they have a queue bigger or equals to the aggregation or the queue equals the global queue of the node  
         # or if they are a tag and have message to send to the anchor.
-        favorite_children = [c for c in children if (((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= aggregation or c.get_weight(anchor) == c.get_Q())) or (c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number)) and (max_queue_size <= 0 or (anchor.current_weight+c.get_weight(anchor) <= max_queue_size) or anchor.sink)]
+        favorite_children = [c for c in children if (\
+            ((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= aggregation or c.get_weight(anchor) == c.get_Q())) \
+            or (c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number)) \
+            and (max_queue_size <= 0 or (anchor.current_weight+min(c.get_weight(anchor), aggregation) <= max_queue_size) or anchor.sink)]
         #if we have a favorite children we create the link with the best one and add this children to the childre list.
         if favorite_children:
             i = favorite_children.index(max(favorite_children, key=lambda c: c.get_Q()))
