@@ -234,7 +234,7 @@ def plot_path_length(param_best, param_worst, output_file="path_length.pdf", sav
   else:
     plt.show()
 
-def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_lenght_graph.pdf", title="Benefit of concurrent communications", yticks=None, timeslot_duration = 5, curves_markers = None, alpha=1.0, legendcol=1, curves_colors=None):
+def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_length_graph.pdf", title="Benefit of concurrent communications", yticks=None, timeslot_duration = 5, curves_markers = None, alpha=1.0, legendcol=1, curves_colors=None):
   """Generate plot graph based on the schedule stat"""
   fig, ax1 = plt.subplots()
   for i in range(len(input_params)):
@@ -454,15 +454,15 @@ def plot_timeslot_distrib(input_csv_file, file="plot_timeslot_distrib.pdf", cumu
 
     #generate the x axis and table according to the slotframe length:
     stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
-    lenght = int(stat["len_schedule"])
+    length = int(stat["len_schedule"])
     if uniform_X_axis : 
-      x = [float(i)/lenght for i in range(0, lenght)]
+      x = [float(i)/length for i in range(0, length)]
     else:
-      x = range(0, lenght)
-    nb_comm = [0 for i in range(0, lenght)]
-    nb_weight = [0 for i in range(0, lenght)]
-    max_comm = [0 for i in range(0, lenght)]
-    nb_channel = [0 for i in range(0, lenght)]
+      x = range(0, length)
+    nb_comm = [0 for i in range(0, length)]
+    nb_weight = [0 for i in range(0, length)]
+    max_comm = [0 for i in range(0, length)]
+    nb_channel = [0 for i in range(0, length)]
     t = 0
     for timeslot in schedule:
       t_comm = 0
@@ -633,6 +633,91 @@ def positionning_frequency_bars(input_csv_file, output_file="positionning_freque
     bottom='off',      # ticks along the bottom edge are off
     top='off',         # ticks along the top edge are off
     labelbottom='off') # labels along the bottom edge are off
+  # plt.legend()
+  if savefig:
+    plt.savefig(output_file)
+    plt.close()
+  else:
+    plt.show()
+
+def slotframe_length_bars(input_csv_file, output_file="slotframe_length_bars.pdf", title="Slotframe length", savefig=True, display_xlabels=True):
+  """Generate plot graph based on the schedule stat
+  param timeslot_duration is in ms
+  """
+  fig, ax = plt.subplots()
+
+  bar_x = []
+  bar_height = []
+  bar_tick_label = []
+  bar_in_label = []
+  bar_x_labels = []
+  i = 1
+  parameters = Bunch_Parameters.get_parameters_from_file(input_csv_file)
+  for param in parameters:
+    stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+
+    bar_x.append(i)
+    bar_height.append(int(stat["len_schedule"]))
+    bar_x_labels.append(int(param.nb_sink))
+    bar_tick_label.append(str(param.name))
+    i+=1
+  bar_in_label = bar_height
+
+  bar_plot = plt.bar(bar_x,bar_height,tick_label=bar_tick_label)
+
+  def add_label_inside_bar(rects):
+    """ add text to describe the height of the bar plot """
+    max_height = max(bar_height)
+    for idx,rect in enumerate(bar_plot):
+      height = rect.get_height()
+      if height > (max(bar_height) / 4):
+        ax.text(rect.get_x() + rect.get_width()/2., .3*height,
+                bar_in_label[idx],
+                ha='center', va='top', rotation=90)
+      else:
+        ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+                bar_in_label[idx],
+                ha='center', va='bottom', rotation=90)
+
+  add_label_inside_bar(bar_plot)
+
+  def text_on_top(rects):
+    max_height = max(bar_height)
+    for idx,rect in enumerate(bar_plot):
+      height = rect.get_height()
+      if height > (max(bar_height) / (2./3)):
+        ax.text(rect.get_x() + rect.get_width()/2., 0.5,
+              "\\textbf{" + bar_tick_label[idx] + "}",
+              ha='center', va='bottom', rotation=90)
+      else:
+        ax.text(rect.get_x() + rect.get_width()/2., .95*max_height,
+              "\\textbf{" + bar_tick_label[idx] + "}",
+              ha='center', va='top', rotation=90)
+
+
+  def set_x_ticks_value(rects, x_labels):
+    plt.xlabel('Number of sinks')
+    x_ticks_value = []
+    for idx,rect in enumerate(bar_plot):
+      x_ticks_value.append(rect.get_x() + rect.get_width()/2.)
+    plt.xticks(x_ticks_value, x_labels)
+
+  if display_xlabels:
+    set_x_ticks_value(bar_plot, bar_x_labels)
+  else:
+    #disable x label
+    text_on_top(bar_plot)
+    plt.tick_params(
+      axis='x',          # changes apply to the x-axis
+      which='both',      # both major and minor ticks are affected
+      bottom='off',      # ticks along the bottom edge are off
+      top='off',         # ticks along the top edge are off
+      labelbottom='off') # labels along the bottom edge are off
+
+  plt.ylim(0,max(bar_height))
+
+  plt.ylabel('Slotframe length')
+  plt.title(title)
   # plt.legend()
   if savefig:
     plt.savefig(output_file)

@@ -18,7 +18,7 @@ SINK_ALL = "all"
 
 
 class Bunch_Parameters():
-  def __init__(self, x, y, space, comm_range, disruption_range, R, nb_tag_loc, sink_allocation, nb_sink, nb_ch, agregation, directory):
+  def __init__(self, x, y, space, comm_range, disruption_range, R, nb_tag_loc, sink_allocation, nb_sink, nb_ch, aggregation, directory):
     """
     A bunch a paramater, we recommend to only vary one parameter per bunch
     :param x witdhs of grids in meters
@@ -31,7 +31,7 @@ class Bunch_Parameters():
     :param sink_allocation Define the pattern of allocation of anchors (best, worst or random)
     :param nb_sink Define the number of sink
     :param nb_ch Define the number of channels
-    :param agregation Define the aggregation capacity of anchors 
+    :param aggregation Define the aggregation capacity of anchors 
     :param directory Define the directory where file will be saved.
     """
     self.x = x
@@ -44,7 +44,7 @@ class Bunch_Parameters():
     self.sink_allocation = sink_allocation
     self.nb_sink = nb_sink
     self.nb_ch = nb_ch
-    self.agregation = agregation
+    self.aggregation = aggregation
     if directory[-1] != '/':
       directory = directory + '/'
     self.directory = directory
@@ -75,7 +75,7 @@ class Bunch_Parameters():
       writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
       writer.writeheader()
       for parameter in parameters:
-        writer.writerow({'x': str(parameter.x), 'y': str(parameter.y), 'space': str(parameter.space), 'comm_range': str(parameter.comm_range), 'disruption_range': str(parameter.disruption_range), 'R': str(R), 'nb_tag_loc': str(parameter.nb_tag_loc), 'sink_allocation': str(parameter.sink_allocation), 'nb_sink': str(parameter.nb_sink), 'nb_ch': str(parameter.nb_ch), 'agregation': str(parameter.agregation), 'directory': str(parameter.directory)})
+        writer.writerow({'x': str(parameter.x), 'y': str(parameter.y), 'space': str(parameter.space), 'comm_range': str(parameter.comm_range), 'disruption_range': str(parameter.disruption_range), 'R': str(R), 'nb_tag_loc': str(parameter.nb_tag_loc), 'sink_allocation': str(parameter.sink_allocation), 'nb_sink': str(parameter.nb_sink), 'nb_ch': str(parameter.nb_ch), 'agregation': str(parameter.aggregation), 'directory': str(parameter.directory)})
 
   def get_parameters_from_file(file):
     """Recommanded file name is "toplogy_param.csv" """
@@ -116,7 +116,7 @@ class Bunch_Parameters():
       return "Number of sink"
     elif len(parameters) > 1 and parameters[0].nb_ch != parameters[1].nb_ch:
       return "Number of channels"
-    elif len(parameters) > 1 and parameters[0].agregation != parameters[1].agregation:
+    elif len(parameters) > 1 and parameters[0].aggregation != parameters[1].aggregation:
       return "Agregation"
     return "Unknown paramter"  
 
@@ -142,8 +142,8 @@ class Bunch_Parameters():
       return [param.nb_sink for param in parameters]
     elif len(parameters) > 1 and parameters[0].nb_ch != parameters[1].nb_ch:
       return [param.nb_ch for param in parameters]
-    elif len(parameters) > 1 and parameters[0].agregation != parameters[1].agregation:
-      return [param.agregation for param in parameters]
+    elif len(parameters) > 1 and parameters[0].aggregation != parameters[1].aggregation:
+      return [param.aggregation for param in parameters]
     return None
 
         
@@ -157,7 +157,7 @@ def gen_topology(parameters, plot_graph=True, repeat=1):
   i = 0
   for repeat_i in range(repeat):
     for param in parameters:
-      print(str(param.x), str(param.y), str(param.space), str(param.comm_range), str(param.disruption_range), str(param.R), str(param.nb_tag_loc), str(param.sink_allocation), str(param.nb_sink), str(param.nb_ch), str(param.agregation), str(param.directory))
+      print(str(param.x), str(param.y), str(param.space), str(param.comm_range), str(param.disruption_range), str(param.R), str(param.nb_tag_loc), str(param.sink_allocation), str(param.nb_sink), str(param.nb_ch), str(param.aggregation), str(param.directory))
 
       topology_ = topology.Topology(param.x, param.y, param.space, param.comm_range, param.disruption_range, param.R, param.nb_tag_loc)
       
@@ -286,7 +286,7 @@ def gen_topology(parameters, plot_graph=True, repeat=1):
           graphics.plot_Q(topology_.nodes, current_directory + "plot_Q.pdf")
           graphics.dot_network_routing(topology_.nodes, current_directory + "dot_network_routing.dot")
 
-        (schedule, duration) = scheduling.scheduling(topology_, n_ch=param.nb_ch, agregation=param.agregation, max_queue_size=param.max_queue)
+        (schedule, duration) = scheduling.scheduling(topology_, n_ch=param.nb_ch, aggregation=param.aggregation, max_queue_size=param.max_queue)
 
         topology_.export_param(current_directory + "topology_param.csv")
         topology_.export_nodes(current_directory + "nodes.csv")
@@ -305,7 +305,7 @@ def update_stat_topology(param):
   """  
   i = 0
   for param in parameters:
-    print(str(param.x), str(param.y), str(param.space), str(param.comm_range), str(param.disruption_range), str(param.R), str(param.nb_tag_loc), str(param.sink_allocation), str(param.nb_sink), str(param.nb_ch), str(param.agregation), str(param.directory))
+    print(str(param.x), str(param.y), str(param.space), str(param.comm_range), str(param.disruption_range), str(param.R), str(param.nb_tag_loc), str(param.sink_allocation), str(param.nb_sink), str(param.nb_ch), str(param.aggregation), str(param.directory))
     current_directory = param.directory
     print("Current directory" + str(current_directory))
 

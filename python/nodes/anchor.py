@@ -106,25 +106,25 @@ class Anchor(Node):
             self.set_parent(node, 0)
             self.broadcast_rank()
 
-    def send_packet(self, destination, agregate=1):
+    def send_packet(self, destination, aggregate=1):
         """
         Send a packet to a neighboring node
         :param destination: The destination node
         """
-        destination.receive_packet(agregate)
-        self.current_weight -= agregate
+        destination.receive_packet(aggregate)
+        self.current_weight -= aggregate
 
-        self.update_Q(-agregate)
+        self.update_Q(-aggregate)
 
         if self.current_weight < 0 :
             raise Exception("The weight (number of message in the buffer) cannot be negative")
 
-    def receive_packet(self, agregate=1):
+    def receive_packet(self, aggregate=1):
         """
         Receive a packet from a child
-        :param agregate: The size of the packet
+        :param aggregate: The size of the packet
         """
-        self.current_weight += agregate
+        self.current_weight += aggregate
 
     def initialise_Q(self):
         """Tag start with the number of packet to send to anchors, anchors need to sum packet from children after the routing step."""
