@@ -22,7 +22,7 @@ def bar_graph(input_csv_file, disruption_distances, output_file="channel_reuse.p
   param timeslot_duration is in ms
   """
   if(plt_ax == None):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(6.4, 2.6)) #default value is (6.4, 4.8)
   else:
     ax = plt_ax
 
@@ -66,9 +66,9 @@ def bar_graph(input_csv_file, disruption_distances, output_file="channel_reuse.p
 
   if timeslot_duration == 0:
     ax.set_ylim(0,max_ch)
-    ax.set_ylabel('Mean concurrent \n Channels usage')
+    ax.set_ylabel('Mean concurrent \n Channel usage')
   else:
-    ax.set_ylabel('Schedule length (Hz)')
+    ax.set_ylabel('Slotframe length')
 
 
   #set a fixed legends
@@ -95,7 +95,8 @@ def bar_graph(input_csv_file, disruption_distances, output_file="channel_reuse.p
   #   top='off',         # ticks along the top edge are off
   #   labelbottom='on') # labels along the bottom edge are off
 
-  plt.xlabel("Disruption range")
+
+  plt.xlabel("Interference range")
 
   #add diverder between group of bar
   y_max=ax.get_ylim()[1]
@@ -103,9 +104,10 @@ def bar_graph(input_csv_file, disruption_distances, output_file="channel_reuse.p
     x=math.ceil((i+1) * offset_group)+0.5
     ax.plot([x, x], [0, y_max], linestyle='dotted', color="grey")
 
+  plt.tight_layout() # force to show the x label
   if plt_ax == None:
     if savefig:
-      plt.savefig(output_file)
+      plt.savefig(output_file, pad_inches=0) #pad inches remove white space
       plt.close()
     else:
       plt.show()
@@ -131,9 +133,9 @@ input_params.append(dir_path + "/topology_param_ch8.csv")
 
 
 
-# bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="channel_reuse_ch8.pdf", title="", savefig=True)
-# bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="positionning_frequency_bars_ch8.pdf", title="", savefig=True, timeslot_duration=5)
-# sub_lot_bar(input_params[0], [2, 3, 4, 10, 30], output_file="bar_graph_ch8.pdf", timeslot_duration=5, max_ch=8)
+bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="channel_reuse_ch8.pdf", title="", savefig=True)
+bar_graph(input_params[0], [2, 3, 4, 10, 30], output_file="slotframe_lenght_bars_ch8.pdf", title="", savefig=True, timeslot_duration=5)
+sub_lot_bar(input_params[0], [2, 3, 4, 10, 30], output_file="bar_graph_ch8.pdf", timeslot_duration=5, max_ch=8)
 
 
 input_params = [dir_path + "/topology_param_4ch.csv"]

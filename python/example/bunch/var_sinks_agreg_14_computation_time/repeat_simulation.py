@@ -118,7 +118,7 @@ slot_frame_length_graph(input_params, curves_names, output_file, title="", ytick
 positionning_frequency_graph(input_params, curves_names, title="", savefig=True, legendcol=3, curves_markers=curves_markers, alpha=0.5)
 # positionning_frequency_bars(dir_path + "/topology_param.csv", output_file="positionning_frequency_bars.pdf", title="", savefig=True)
 schedule_duration_graph(input_params, curves_names, dir_path+"/schedule_duration_graph.pdf", title="", curves_markers=curves_markers, alpha=0.5, legendcol=3)
-schedule_duration_graph(input_params, curves_names, dir_path+"/schedule_duration_graph_repeat.pdf", title="", curves_markers=curves_markers, alpha=0.5, legendcol=3, repeat=REPEAT)
+schedule_duration_graph(input_params, curves_names, dir_path+"/schedule_duration_graph_means.pdf", title="", curves_markers=curves_markers, alpha=0.5, legendcol=3, repeat=REPEAT)
 
 input_params = []
 curves_names = []

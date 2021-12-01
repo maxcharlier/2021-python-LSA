@@ -516,7 +516,7 @@ def plot_timeslot_distrib(input_csv_file, file="plot_timeslot_distrib.pdf", cumu
   if len(title) >0:
     axs[0].set_title(title)
   if legend == "Disruption":
-    axs[0].legend(title="Disruption range :", ncol=3, handles=legend_handles)
+    axs[0].legend(title="Interference range :", ncol=3, handles=legend_handles)
   elif legend == "Channel":
     axs[0].legend(title="Number of channels :", ncol=3, handles=legend_handles)
 
