@@ -49,5 +49,5 @@ plot_max_queue_size(input_params, curves_names, dir_path+"/plot_max_queue_size.p
 # plot_timeslots_usage(input_params, curves_names, savefig=True, index_param=6)
 # positionning_frequency_graph(input_params, curves_names, title="", savefig=True, legendcol=2)
 # positionning_frequency_bars(dir_path + "/topology_param.csv", output_file="positionning_frequency_bars.pdf", title="", savefig=True)
-slotframe_length_bars(dir_path + "/topology_param.csv", output_file="slotframe_length_bars_8ch.pdf", title="", savefig=True)
+slotframe_length_bars(dir_path + "/topology_param.csv", output_file="slotframe_length_bars_8ch.pdf", title="", savefig=True, display_xlabels=True)
 # schedule_duration_graph(input_params, curves_names, dir_path+"/schedule_duration_graph.pdf", title="")

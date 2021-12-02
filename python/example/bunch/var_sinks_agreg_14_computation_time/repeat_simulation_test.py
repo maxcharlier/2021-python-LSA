@@ -25,11 +25,14 @@ curves_markers = []
 curves_colors = []
 output_file=dir_path + "/slot_frame_length_graph.pdf"
 
-input_params.append(dir_path + "/test-ch8-agr1-sink1.csv")
+# input_params.append(dir_path + "/test-ch8-agr1-sink1.csv")
+# input_params.append(dir_path + "/test-ch8-agr1-sink5.csv")
+# input_params.append(dir_path + "/ch8-agr1-sink440-disruption-1.5.csv")
+input_params.append(dir_path + "/ch8-agr14-sink8-test.csv")
 curves_names.append("1 a, 1 s")
 curves_markers.append("s")
-REPEAT = 5
-# for file in input_params:
-#   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False, repeat=REPEAT)
+REPEAT = 1
+for file in input_params:
+  gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False, repeat=REPEAT)
 
 schedule_duration_graph(input_params, curves_names, output_file=dir_path+"/schedule_duration_graph_filtered.pdf", title="", curves_markers=curves_markers, alpha=0.5, legendcol=3, repeat=REPEAT)

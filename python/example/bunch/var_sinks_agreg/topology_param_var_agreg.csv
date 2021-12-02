@@ -1,0 +1,9 @@
+x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch,agregation,directory,dist_sink,name
+20,20,1,1.5,2,1,1,best,1,8,1,./result/ch8-agr1-sink1-dist-13.5/,13.5,"A1,S1"
+20,20,1,1.5,2,1,1,all,440,8,1,./result/ch8-agr1-sink440-dist-13.5/,13.5,"A1,SAll"
+20,20,1,1.5,2,1,1,best,1,8,2,./result/ch8-agr2-sink2-dist-13.5/,13.5,"A2,S1"
+20,20,1,1.5,2,1,1,best,1,8,3,./result/ch8-agr3-sink1-dist-13.5/,13.5,"A3,S1"
+20,20,1,1.5,2,1,1,best,1,8,4,./result/ch8-agr4-sink1-dist-13.5/,13.5,"A4,S1"
+20,20,1,1.5,2,1,1,best,1,8,7,./result/ch8-agr7-sink1-dist-13.5/,13.5,"A7,S1"
+20,20,1,1.5,2,1,1,best,1,8,14,./result/ch8-agr14-sink1-dist-13.5/,13.5,"A14,S1"
+20,20,1,1.5,2,1,1,all,440,8,14,./result/ch8-agr14-sink440-dist-13.5/,13.5,"A14,SAll"

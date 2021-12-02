@@ -10,6 +10,7 @@ from gen_graph_bunch import gen_graphs_from_file
 from gen_graph_bunch import plot_slotframe_distrib
 from gen_graph_bunch import plot_slotframe_channels_usage
 from gen_graph_bunch import schedule_duration_graph
+from gen_graph_bunch import slotframe_length_bars
 from export_bunch import Bunch_Parameters
 import scheduling
 import topology
@@ -184,3 +185,5 @@ distribution_graph(dir_path + "/topology_param-distrib-1.csv", output_file="dist
 
 # gen_topology(Bunch_Parameters.get_parameters_from_file(dir_path + "/topology_param-distrib-2.csv"), plot_graph=False)
 distribution_graph(dir_path + "/topology_param-distrib-2.csv", output_file="distribution-2-tags.pdf")
+slotframe_length_bars(dir_path + "/topology_param-distrib-1.csv", output_file="slotframe_length_bars_distrib_1.pdf", title="", savefig=True)
+slotframe_length_bars(dir_path + "/topology_param-distrib-2.csv", output_file="slotframe_length_bars_distrib_2.pdf", title="", savefig=True)

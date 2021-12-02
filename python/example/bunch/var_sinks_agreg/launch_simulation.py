@@ -12,6 +12,7 @@ from gen_graph_bunch import plot_slotframe_channels_usage
 from gen_graph_bunch import positionning_frequency_bars
 from gen_graph_bunch import schedule_duration_graph
 from gen_graph_bunch import plot_max_queue_size
+from gen_graph_bunch import slotframe_length_bars
 from export_bunch import Bunch_Parameters
 import scheduling
 import topology
@@ -194,3 +195,4 @@ curves_colors.append('0.85')
 # schedule_duration_graph(input_params, curves_names, output_file=dir_path+"/schedule_duration_graph_filtered.pdf", title="", curves_markers=curves_markers, alpha=0.5, legendcol=3)
 
 plot_max_queue_size(input_params, curves_names, dir_path+"/maximum_queue_size.pdf", title="")
+slotframe_length_bars(dir_path + "/topology_param_var_agreg.csv", output_file="slotframe_length_bars_8ch_var_agreg.pdf", title="", savefig=True, display_xlabels=False)

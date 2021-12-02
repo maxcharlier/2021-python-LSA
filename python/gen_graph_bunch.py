@@ -256,8 +256,8 @@ def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_
     if curves_colors != None:
       ax1.plot(nb_tags, len_schedule, alpha=0.3, marker=",", linestyle='dotted', color='black')
 
-  plt.xlabel('Number of cells in the network')
-  ax1.set_ylabel('Length of the resulting slotframe')
+  plt.xlabel('Network size')
+  ax1.set_ylabel('Slotframe length')
 
   plt.title(title)
   plt.legend(ncol=legendcol)
@@ -313,7 +313,10 @@ def schedule_duration_graph(input_params, curves_names, output_file="schedule_du
     if curves_colors != None:
       ax1.plot(nb_tags, durations, alpha=0.3, marker=",", linestyle='dotted', color='black')
   plt.xlabel('Number of cells in the network')
-  ax1.set_ylabel('Computation duration of the Scheduling (s)')
+  if repeat ==1:
+    ax1.set_ylabel('Computation duration of the Scheduling (s)')
+  else:
+    ax1.set_ylabel('Means computation duration of the Scheduling (s)')
 
   plt.title(title)
   plt.legend(ncol=legendcol)
@@ -752,14 +755,15 @@ def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_
     if curves_colors != None:
       ax1.plot(nb_tags, queue_sizes, alpha=0.3, marker=",", linestyle='dotted', color='black')
 
-  plt.xlabel('Number of cells in the network')
-  ax1.set_ylabel('Maximum queue size during the slotframe')
+  plt.xlabel('Network size')
+  ax1.set_ylabel('Maximum queue depth during the slotframe')
 
   plt.title(title)
   plt.legend(ncol=legendcol)
   ax1.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   if yticks !=None:
-    plt.yticks(yticks)
+    print(yticks)
+    plt.yticks(yticks, yticks)
 
 
   # plt.show()
@@ -767,7 +771,93 @@ def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_
   plt.close()
       
 
+def schedule_duration_bars(input_csv_file, output_file="schedule_duration_bars.pdf", title="Computation duration of the Scheduling",  savefig=True, display_xlabels=True, repeat=1):
+  """Generate plot graph based on the schedule stat"""
+  fig, ax = plt.subplots()
+
+  bar_x = []
+  bar_height = []
+  bar_tick_label = []
+  bar_in_label = []
+  bar_x_labels = []
+  i = 1
+  for param in parameters:
+    stat = scheduling.import_schedule_stat(param.directory + "schedule_stat.csv")
+    duration =0
+    for repeat_i in range(repeat):
+      if repeat_i > 0 :
+        current_directory = param.directory.replace("result", "result"+str(repeat_i))
+      else:
+        current_directory = param.directory
+      stat = scheduling.import_schedule_stat(current_directory + "schedule_stat.csv")
+      duration += float(stat["duration"])
+    durations.append(duration/repeat)
+    bar_x.append(i)
+    bar_height.append(duration)
+    bar_x_labels.append(int(param.nb_sink))
+    bar_tick_label.append(str(param.name))
+    i+=1
+  bar_in_label = bar_height
+
+  bar_plot = plt.bar(bar_x,bar_height,tick_label=bar_tick_label)
+
+  def add_label_inside_bar(rects):
+    """ add text to describe the height of the bar plot """
+    max_height = max(bar_height)
+    for idx,rect in enumerate(bar_plot):
+      height = rect.get_height()
+      if height > (max(bar_height) / 4):
+        ax.text(rect.get_x() + rect.get_width()/2., .3*height,
+                bar_in_label[idx],
+                ha='center', va='top', rotation=90)
+      else:
+        ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+                bar_in_label[idx],
+                ha='center', va='bottom', rotation=90)
+
+  add_label_inside_bar(bar_plot)
+
+  def text_on_top(rects):
+    max_height = max(bar_height)
+    for idx,rect in enumerate(bar_plot):
+      height = rect.get_height()
+      if height > (max(bar_height) / (2./3)):
+        ax.text(rect.get_x() + rect.get_width()/2., 0.5,
+              "\\textbf{" + bar_tick_label[idx] + "}",
+              ha='center', va='bottom', rotation=90)
+      else:
+        ax.text(rect.get_x() + rect.get_width()/2., .95*max_height,
+              "\\textbf{" + bar_tick_label[idx] + "}",
+              ha='center', va='top', rotation=90)
+
+
+  
+  #disable x label
+  text_on_top(bar_plot)
+  plt.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom='off',      # ticks along the bottom edge are off
+    top='off',         # ticks along the top edge are off
+    labelbottom='off') # labels along the bottom edge are off
+
+  plt.ylim(0,max(bar_height))
+
+
+  if repeat ==1:
+    plt.ylabel('Computation duration of the Scheduling (s)')
+  else:
+    plt.ylabel('Means computation duration of the Scheduling (s)')
+
+  plt.title(title)
+  # plt.legend()
+  if savefig:
+    plt.savefig(output_file)
+    plt.close()
+  else:
+    plt.show()
 
 if __name__ == '__main__':
   gen_graphs_from_file("./example/bunch/var_agreg/")
   gen_graphs_from_file("./example/bunch/var_channels/")
+
