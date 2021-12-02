@@ -5,6 +5,7 @@ sys.path.append('../../../')
 from export_bunch import gen_topology
 from gen_graph_bunch import schedule_duration_graph
 from gen_graph_bunch import schedule_duration_bars
+from gen_graph_bunch import slotframe_length_bars
 from export_bunch import Bunch_Parameters
 import scheduling
 import topology
@@ -62,4 +63,8 @@ curves_colors.append('0.85')
 # slot_frame_length_graph(input_params, curves_names, dir_path+"/slot_frame_length_graph_agreg.pdf", title="", yticks=range(0, 1201, 100), curves_markers=curves_markers, alpha=0.8, legendcol=3)
 
 schedule_duration_graph(input_params, curves_names, output_file=dir_path+"/schedule_duration_graph_agreg_means.pdf", title="", curves_markers=curves_markers, alpha=0.5, legendcol=3, repeat=REPEAT)
-schedule_duration_bars(dir_path + "/topology_param_var_sinks.csv", output_file="schedule_duration_bars_sinks.pdf", title="", savefig=True)
+schedule_duration_bars(dir_path + "/topology_param_var_sinks_agreg1.csv", output_file="schedule_duration_bars_sinks_agreg1.pdf", title="", savefig=True,max_duration=14, repeat=REPEAT)
+schedule_duration_bars(dir_path + "/topology_param_var_sinks_agreg14.csv", output_file="schedule_duration_bars_sinks_agreg14.pdf", title="", savefig=True,max_duration=14, repeat=REPEAT)
+
+slotframe_length_bars(dir_path + "/topology_param_var_sinks_agreg1.csv", output_file="schedule_length_bars_sinks_agreg1.pdf", title="", savefig=True)
+slotframe_length_bars(dir_path + "/topology_param_var_sinks_agreg14.csv", output_file="schedule_length_bars_sinks_agreg14.pdf", title="", savefig=True)
