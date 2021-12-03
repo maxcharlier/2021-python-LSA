@@ -137,7 +137,7 @@ def matching_sinks(sinks, slot_number, aggregation, max_queue_size):
 
     return selected
 
-def matching(anchor, slot_number, aggregation, max_queue_size):
+def matching_old(anchor, slot_number, aggregation, max_queue_size):
     """
     Performs the matching of the tree graph
     :param anchor: The root of the sub-tree
@@ -166,11 +166,63 @@ def matching(anchor, slot_number, aggregation, max_queue_size):
             if(favorite_children[i].type == 'anchor'):
                 children += list(favorite_children[i].childrens)
             favorite_children[i].set_link(Link(favorite_children[i], anchor, min(favorite_children[i].get_weight(anchor), aggregation)))
-
+            
         for child in children:
             #we only perform the recursive call on anchors
             if child.type == 'anchor':
                 selected += matching(child, slot_number, aggregation, max_queue_size)
+
+    return selected
+
+def matching(anchor, slot_number, aggregation, max_queue_size):
+    """
+    Performs the matching of the tree graph
+    :param anchor: The root of the sub-tree
+    :return: A list of selected sending nodes
+    """
+    def rec_call(children):
+        """recursive call onf the matching on children sorted by global queue"""
+        selected = []
+
+        local_children = children.copy() #avoid edge effect
+        while local_children: 
+            i = local_children.index(max(local_children, key=lambda n: n.get_Q()))
+            child = local_children.pop(i)
+            if child.type == 'anchor' and child.get_Q() > 0:
+                selected += matching(child, slot_number, aggregation, max_queue_size)
+        return selected
+
+    selected = []
+    #check if the node have childrens
+    if anchor.childrens:
+        children = [c for c in anchor.childrens if(c.get_Q() > 0)]
+        # Check if the queue of anchor is less than max queue size or if it is a sink.
+        # In this case anchor can receive message from one of it's children.
+        
+        #children is listed if 
+        # - they are anchor and they have a queue bigger or equals to the aggregation or the queue equals the global queue of the node  
+        # or if they are a tag and have message to send to the anchor.
+        favorite_children = [c for c in children if (\
+            ((c.type == 'anchor' and c.get_weight(anchor) > 0 and (c.get_weight(anchor) >= aggregation or c.get_weight(anchor) == c.get_Q())) \
+            or (c.type == 'tag' and c.get_weight(anchor) > 0) and c.get_last_slot_number() < slot_number)) \
+            and (max_queue_size <= 0 or (anchor.current_weight+min(c.get_weight(anchor), aggregation) <= max_queue_size) or anchor.sink)]
+        #if we have a favorite children we create the link with the best one and add this children to the childre list.
+        if favorite_children:
+            i = favorite_children.index(max(favorite_children, key=lambda c: c.get_Q()))
+            selected += [favorite_children[i]]
+            children.remove(favorite_children[i])
+            favorite_children[i].set_slot_number(slot_number) #avoid selecting a node two times
+            if(favorite_children[i].type == 'anchor'):
+                selected+=rec_call(favorite_children[i].childrens)
+
+
+            favorite_children[i].set_link(Link(favorite_children[i], anchor, min(favorite_children[i].get_weight(anchor), aggregation)))
+        
+
+        selected+=rec_call(children)
+
+
+
 
     return selected
 
