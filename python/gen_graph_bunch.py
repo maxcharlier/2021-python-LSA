@@ -127,7 +127,7 @@ def plot_transmissions_repartion(param_best, param_worst, output_file="plot_tran
   plt.plot(nb_tags_worst, nb_data_worst, label="Data - corner", marker="+", linestyle='dashed', color='tab:orange')
   plt.plot(nb_tags_worst, all_worst, label="All - corner", marker="d", linestyle='dashed', color='tab:orange')
 
-  plt.xlabel('Number of cells of the network')
+  plt.xlabel('Network size')
   plt.ylabel('Number of transmissions')
   plt.legend()
   if savefig:
@@ -220,7 +220,7 @@ def plot_path_length(param_best, param_worst, output_file="path_length.pdf", sav
   # axs[0].legend(handles=legend_handles, loc="lower right", bbox_to_anchor=(1, 1.04))
 
   plt.xticks(range(0, 401, 50), range(0, 401, 50), rotation=0)
-  plt.xlabel('Number of cells of the network')
+  plt.xlabel('Network size')
   # plt.xlim(-10, 410)
   fig.tight_layout()
   # plt.plot(nb_tags_worst, all_worst, label="All - corner", marker="d", linestyle='dashed', color='tab:orange')
@@ -312,7 +312,7 @@ def schedule_duration_graph(input_params, curves_names, output_file="schedule_du
       ax1.plot(nb_tags, durations, label=curves_names[i], alpha=alpha, marker=".", c=color)
     if curves_colors != None:
       ax1.plot(nb_tags, durations, alpha=0.3, marker=",", linestyle='dotted', color='black')
-  plt.xlabel('Number of cells in the network')
+  plt.xlabel('Network size')
   if repeat ==1:
     ax1.set_ylabel('Computation duration of the Scheduling (s)')
   else:
@@ -356,7 +356,7 @@ def positionning_frequency_graph(input_params, curves_names, output_file="positi
       plt.plot(nb_tags, len_schedule, label=curves_names[i], alpha=alpha, marker=".", color=color)
     if curves_colors != None:
       plt.plot(nb_tags, len_schedule, alpha=0.3, marker=",", linestyle='dotted', color='black')
-  plt.xlabel('Number of cells in the network')
+  plt.xlabel('Network size')
   plt.ylabel('Localization update (Hz)')
   plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
   plt.title(title)
@@ -524,9 +524,9 @@ def plot_timeslot_distrib(input_csv_file, file="plot_timeslot_distrib.pdf", cumu
     axs[0].legend(title="Number of channels :", ncol=3, handles=legend_handles)
 
   # plt.tight_layout()
-  plt.savefig(file)
+  # plt.savefig(file)
   # plt.savefig(file, format='jpeg')
-
+  plt.show()
   plt.close()
 
 
@@ -643,9 +643,9 @@ def positionning_frequency_bars(input_csv_file, output_file="positionning_freque
   else:
     plt.show()
 
-def slotframe_length_bars(input_csv_file, output_file="slotframe_length_bars.pdf", title="Slotframe length", savefig=True, display_xlabels=True):
+def slotframe_length_bars(input_csv_file, output_file="slotframe_length_bars.pdf", title="Slotframe length", savefig=True, display_xlabels=True, timeslot_duration=0):
   """Generate plot graph based on the schedule stat
-  param timeslot_duration is in ms
+  param timeslot_duration is in ms for a bit-rate of 6.8 mbps
   """
   fig, ax = plt.subplots()
 
@@ -721,6 +721,20 @@ def slotframe_length_bars(input_csv_file, output_file="slotframe_length_bars.pdf
 
   plt.ylabel('Slotframe length')
   plt.title(title)
+  
+  if(timeslot_duration != 0):
+    #generate second axis
+    ax2 = ax.twinx()
+    factor = float(timeslot_duration)/1000
+    print("slot_frame_length_graph factor : " + str(factor))
+    mn, mx = ax.get_ylim()
+    print((mx, mx*factor))
+    # ax1.set_ylim(0, mx)
+    ax2.set_ylim(mn*factor, mx*factor)
+    ax2.set_ylabel("Slotframe duration (s) at 6.8 Mb/s")
+
+  plt.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
+
   # plt.legend()
   if savefig:
     plt.savefig(output_file)
@@ -865,6 +879,7 @@ def schedule_duration_bars(input_csv_file, output_file="schedule_duration_bars.p
     plt.ylabel('Means computation duration of the Scheduling (s)')
 
   plt.title(title)
+
   # plt.legend()
   if savefig:
     plt.savefig(output_file)

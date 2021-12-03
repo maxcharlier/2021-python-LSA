@@ -156,4 +156,4 @@ input_params = [dir_path + "/topology_param_ch8_400.csv"]
 # plot_timeslot_distrib(dir_path + "/topology_param_ch8_400.csv", file="plot_timeslot_ch8-400_cells.pdf", title="400 cells sheduled on 8 channels",max_ch=8)
 # plot_timeslot_distrib(dir_path + "/topology_param_ch4_400.csv", file="plot_timeslot_ch4-400_cells.pdf", title="400 cells sheduled on 4 channels",max_ch=4)
 plot_timeslot_distrib(dir_path + "/topology_param_ch8_400.csv", file="plot_timeslot_ch8-400_cells.pdf", max_ch=8, uniform_X_axis=False)
-plot_timeslot_distrib(dir_path + "/topology_param_ch4_400.csv", file="plot_timeslot_ch4-400_cells.pdf", max_ch=4, uniform_X_axis=False)
+# plot_timeslot_distrib(dir_path + "/topology_param_ch4_400.csv", file="plot_timeslot_ch4-400_cells.pdf", max_ch=4, uniform_X_axis=False)
