@@ -123,13 +123,17 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
 
   # print([(refresh[0]*R[0])/i for i in range(1, max_x)])
   # print([(x*2)+0.5 for x in range(1, max_x)])
+  distribution_tags = [[] for i in range(0, len(bar_values))] #percentage of tags for each number of tags in a cell.
   for i in range(0, len(bar_values)):
     nb_tags = sum([((bar_values[i][y]*y)) for y in range(1, len(bar_values[i]))])
     if i == 0:
-      bar_plot = ax.bar([i_to_x(x) for x in range(1, len(bar_values[i]))],[((bar_values[i][y]*y)/nb_tags*100) for y in range(1, len(bar_values[i]))])
+      distribution_tags[i] = [((bar_values[i][y]*y)/nb_tags*100) for y in range(1, len(bar_values[i]))]
+      bar_plot = ax.bar([i_to_x(x) for x in range(1, len(bar_values[i]))],distribution_tags[i])
     else:
-      bar_plot = ax.bar([i_to_x(x)-0.5+(i*(1.0/len(bar_values))) for x in range(1, len(bar_values[i]))],[((bar_values[i][y]*y)/nb_tags*100) for y in range(1, len(bar_values[i]))])
+      distribution_tags[i] = [((bar_values[i][y]*y)/nb_tags*100) for y in range(1, len(bar_values[i]))]
+      bar_plot = ax.bar([i_to_x(x)-0.5+(i*(1.0/len(bar_values))) for x in range(1, len(bar_values[i]))],distribution_tags[i])
   
+  # print(distributison_tags)
 
   bar_mean= [0 for x in range(1, max([len(bar_values[i]) for i in range(1, len(bar_values))]))]
   # print("bar mean " + str(bar_mean))
@@ -149,6 +153,24 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
 
   # print("sum mean " +str(sum(bar_mean)))
 
+  def convert_tag_per_cell_to_refresh(tab):
+    refresh_means = []
+    for distrib in tab:
+      refresh_means_current = 0
+      for i in range(len(distrib)):
+        tag_per_cell_to_refresh = (refresh[0]/(i+1))*R[0] #(refresh of uniform distribution / nb_tag_in_a_cell) * nb_tag_in_a_cell_uniform_distribution
+        refresh_means_current += distrib[i]*tag_per_cell_to_refresh
+      refresh_means.append(refresh_means_current/100.0)
+    return refresh_means
+
+  print("Means refresh for uniform run " + str(convert_tag_per_cell_to_refresh([distribution_tags[0]])))
+  print("Means refresh for uniform run " + str(1/sum(convert_tag_per_cell_to_refresh([distribution_tags[0]]))))
+  print("Means refresh for all run " + str(convert_tag_per_cell_to_refresh(distribution_tags)))
+  print("Means refresh for all random run " + str(convert_tag_per_cell_to_refresh(distribution_tags[1:])))
+  print("--------------------")
+  print("Means refresh for all random run " + str(sum(convert_tag_per_cell_to_refresh(distribution_tags[1:]))/len(distribution_tags[1:])) +" Hz")
+  print("Means refresh for all random run " + str(1/(sum(convert_tag_per_cell_to_refresh(distribution_tags[1:]))/len(distribution_tags[1:])))+" s")
+  print("--------------------")
 
   #axis ticks and label
   #bottom x axis
@@ -184,6 +206,6 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 distribution_graph(dir_path + "/topology_param-distrib-1.csv", output_file="distribution-1-tag.pdf")
 
 # gen_topology(Bunch_Parameters.get_parameters_from_file(dir_path + "/topology_param-distrib-2.csv"), plot_graph=False)
-distribution_graph(dir_path + "/topology_param-distrib-2.csv", output_file="distribution-2-tags.pdf")
-slotframe_length_bars(dir_path + "/topology_param-distrib-1.csv", output_file="slotframe_length_bars_distrib_1.pdf", title="", savefig=True)
-slotframe_length_bars(dir_path + "/topology_param-distrib-2.csv", output_file="slotframe_length_bars_distrib_2.pdf", title="", savefig=True)
+# distribution_graph(dir_path + "/topology_param-distrib-2.csv", output_file="distribution-2-tags.pdf")
+# slotframe_length_bars(dir_path + "/topology_param-distrib-1.csv", output_file="slotframe_length_bars_distrib_1.pdf", title="", savefig=True)
+# slotframe_length_bars(dir_path + "/topology_param-distrib-2.csv", output_file="slotframe_length_bars_distrib_2.pdf", title="", savefig=True)
