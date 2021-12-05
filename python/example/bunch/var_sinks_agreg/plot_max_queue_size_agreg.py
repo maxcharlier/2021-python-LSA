@@ -57,5 +57,5 @@ curves_colors.append('0.85')
 # for file in input_params:
 #   gen_topology(Bunch_Parameters.get_parameters_from_file(file), plot_graph=False)
 
-plot_max_queue_size(input_params, curves_names, dir_path+"/maximum_queue_size_agreg.pdf", title="")
+plot_max_queue_size(input_params, curves_names, dir_path+"/maximum_queue_size_agreg.pdf", title="",yticks=[x for x in range(0, 141, 25)]+[137])
 slot_frame_length_graph(input_params, curves_names, dir_path+"/slot_frame_length_graph_agreg.pdf", title="", yticks=range(0, 1201, 100), curves_markers=curves_markers, alpha=0.8, legendcol=3)

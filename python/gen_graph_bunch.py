@@ -314,9 +314,9 @@ def schedule_duration_graph(input_params, curves_names, output_file="schedule_du
       ax1.plot(nb_tags, durations, alpha=0.3, marker=",", linestyle='dotted', color='black')
   plt.xlabel('Network size')
   if repeat ==1:
-    ax1.set_ylabel('Computation duration of the Scheduling (s)')
+    ax1.set_ylabel('Computation time (s)')
   else:
-    ax1.set_ylabel('Means computation duration of the Scheduling (s)')
+    ax1.set_ylabel('Means computation time (s)')
 
   plt.title(title)
   plt.legend(ncol=legendcol)
@@ -742,10 +742,14 @@ def slotframe_length_bars(input_csv_file, output_file="slotframe_length_bars.pdf
   else:
     plt.show()
 
-def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_size.pdf", title="Maximum queue size", savefig=True, yticks=None, curves_markers = None, alpha=1.0, legendcol=1, curves_colors=None):
+def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_size.pdf", title="Maximum queue size", savefig=True, yticks=None, curves_markers = None, alpha=1.0, legendcol=2, curves_colors=None):
   """Plot the maximum queue size according to the size of the network"""
   """Generate plot graph based on the schedule stat"""
-  fig, ax1 = plt.subplots()
+
+  matplotlib.rcParams.update({'font.size': 35})
+
+  fig, ax1 = plt.subplots(figsize=(10,8))
+  # fig, ax1 = plt.subplots()
   for i in range(len(input_params)):
     queue_sizes = []
     nb_tags = []
@@ -765,22 +769,27 @@ def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_
     if curves_markers != None : 
       ax1.plot(nb_tags, queue_sizes, label=curves_names[i], alpha=alpha, marker=curves_markers[i], c=color)
     else:
-      ax1.plot(nb_tags, queue_sizes, label=curves_names[i], alpha=alpha, marker=".", c=color)
+      ax1.plot(nb_tags, queue_sizes, label=curves_names[i], alpha=alpha, marker=".", c=color, markersize=15)
     if curves_colors != None:
       ax1.plot(nb_tags, queue_sizes, alpha=0.3, marker=",", linestyle='dotted', color='black')
 
   plt.xlabel('Network size')
-  ax1.set_ylabel('Maximum queue depth during the slotframe')
+  ax1.set_ylabel('Maximum queue depth \\\\during the slotframe')
 
   plt.title(title)
-  plt.legend(ncol=legendcol)
+  # plt.legend(ncol=legendcol)
+  # plt.legend(loc='lower center', bbox_to_anchor=(0.5, 1.04), shadow=True, ncol=4)
+
+  plt.xticks(range(0, 401, 50))
   ax1.grid(color='tab:grey', linestyle='--', linewidth=1, alpha=0.3)
+
   if yticks !=None:
     print(yticks)
     plt.yticks(yticks, yticks)
 
 
   # plt.show()
+  plt.tight_layout()
   plt.savefig(output_file)
   plt.close()
       
