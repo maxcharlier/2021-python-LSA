@@ -213,7 +213,8 @@ class Topology():
         return Topology(float(row['x']), float(row['y']), float(row['space']), float(row['comm_range']), float(row['disruption_range']), int(row['R']), int(row['nb_tag_loc']))
 
   def set_sink(self, node):
-    self.sinks.append(node)
+    if node not in self.sinks:
+      self.sinks.append(node)
           
   def set_nodes(self, anchors, tags):
     self.nodes = anchors + tags

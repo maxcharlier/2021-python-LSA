@@ -143,6 +143,9 @@ def plot_path_length(param_best, param_worst, output_file="path_length.pdf", sav
 
   fig, axs = plt.subplots(2)
   legend_handles = []
+  #offset title to be inside the figure
+  # plt.rcParams['axes.titley'] = 1.0
+  # plt.rcParams['axes.titlepad'] = -14
 
   def boxplot(parameter_file, axis, title):
     nb_hops = []
@@ -202,7 +205,11 @@ def plot_path_length(param_best, param_worst, output_file="path_length.pdf", sav
     axis.plot(nb_cells, means, color='tab:grey', linestyle='--') 
     #whis avoid outliers, defautl value is 1.5
     axis.boxplot(nb_hops, positions=nb_cells, labels= ['' for x in range(len(nb_cells))], widths=1.5, whis=3.0)
-    axis.set_title(title)
+    # axis.set_title("$~~~$" +str(title), loc='center', pad=-14)
+    axis.text(10, 20, str(title), horizontalalignment='left', verticalalignment='top', fontweight=plt.rcParams['axes.titleweight'], fontsize=plt.rcParams['axes.titlesize'])
+    # legend_handles = []
+    # legend_handles.append(Line2D([0], [0], color='tab:grey', label="Means", linestyle='--'))
+    # axs[0].legend(handles=legend_handles, loc="lower right", bbox_to_anchor=(1, 1.04))
     # axis.set_yticks(np.arange(0, 22, 2.5), [int(x) if int(x)%5==0 else '' for x in np.arange(0, 22, 2.5)])
     axis.set_yticks(np.arange(0, 22, 2.5))
     # axis.set_xticks(range(0, 401, 50), ['' for x in range(0, 401, 50)]) 
@@ -316,7 +323,7 @@ def schedule_duration_graph(input_params, curves_names, output_file="schedule_du
   if repeat ==1:
     ax1.set_ylabel('Computation time (s)')
   else:
-    ax1.set_ylabel('Means computation time (s)')
+    ax1.set_ylabel('Mean computation time (s)')
 
   plt.title(title)
   plt.legend(ncol=legendcol)
@@ -774,7 +781,7 @@ def plot_max_queue_size(input_params, curves_names, output_file="plot_max_queue_
       ax1.plot(nb_tags, queue_sizes, alpha=0.3, marker=",", linestyle='dotted', color='black')
 
   plt.xlabel('Network size')
-  ax1.set_ylabel('Maximum queue depth \\\\during the slotframe')
+  ax1.set_ylabel('Maximum queue depth')
 
   plt.title(title)
   # plt.legend(ncol=legendcol)
