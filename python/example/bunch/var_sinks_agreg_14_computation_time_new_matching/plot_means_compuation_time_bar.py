@@ -47,7 +47,6 @@ def mean_computation_time(input_csv_file_ag1,input_csv_file_ag14, \
       duration += float(stat["duration"])
 
     mean_computation_time_ag1.append(round(duration/repeat,2))
-    print("agg 1 " + str(param.nb_sink) + " " + str(round(duration/repeat,2)))
     nb_sinks.append(int(param.nb_sink))
 
   bar_plot_ag1 = plt.bar(bars_x - bar_width/2, mean_computation_time_ag1, bar_width, label="Aggreg 1")
@@ -61,8 +60,7 @@ def mean_computation_time(input_csv_file_ag1,input_csv_file_ag14, \
         current_directory = param.directory
       stat = scheduling.import_schedule_stat(current_directory + "schedule_stat.csv")
       duration += float(stat["duration"])
-    print("agg 14 " + str(param.nb_sink) + " " + str(round(duration/repeat,2)))
-
+      
     mean_computation_time_ag14.append(round(duration/repeat,2))
 
   bar_plot_ag14 = plt.bar(bars_x + bar_width/2, mean_computation_time_ag14, bar_width, label="Aggreg 14")
@@ -122,4 +120,4 @@ def mean_computation_time(input_csv_file_ag1,input_csv_file_ag14, \
 
 
 mean_computation_time(dir_path + "/topology_param_var_sinks_agreg1.csv", dir_path + "/topology_param_var_sinks_agreg14.csv", \
-          output_file="mean_computation_time_bars.pdf", savefig=True, repeat=5)
+          output_file="mean_computation_time_bars.pdf", savefig=True, repeat=1)

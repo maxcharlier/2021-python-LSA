@@ -1,0 +1,3 @@
+x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch,agregation,directory,dist_sink,max_queue
+20,20,1,1.5,2,1,1,best,1,8,1,./result/ch8-agr1-sink1-dist-1.6/,1.6,14
+20,20,1,1.5,2,1,1,best,1,8,1,./result/ch8-agr1-sink1-dist-4/,4,14

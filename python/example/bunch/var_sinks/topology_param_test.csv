@@ -1,0 +1,3 @@
+x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch,agregation,directory,dist_sink,name
+
+20,20,1,1.5,2,1,1,best,18,1,1,./result/ch1-agr1-dist-13.5/,13.5,"1 Channel - agreg 1"

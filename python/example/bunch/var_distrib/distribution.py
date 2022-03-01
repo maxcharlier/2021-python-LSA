@@ -184,7 +184,7 @@ def distribution_graph(input_csv_file, output_file="tag_per_cells.pdf", title="T
   ax_secondary.set_xticks([i_to_x(i) for i in range(1, max_x)])
   # print(ax.get_xticks())
   ax_secondary.set_xticklabels([(str(round((refresh[0]/(x/2)*R[0]),3)) if x > 0 else '') for x in ax_secondary.get_xticks()])
-  ax_secondary.set_xlabel('Localisation rate for each tag [Hz]')
+  ax_secondary.set_xlabel('Localization rate for each tag [Hz]')
   #yaxis
   plt.yticks([i*10 for i in range(0, 11)]) 
   ax.set_ylabel('Fraction of tags [\%]')
@@ -206,6 +206,6 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 distribution_graph(dir_path + "/topology_param-distrib-1.csv", output_file="distribution-1-tag.pdf")
 
 # gen_topology(Bunch_Parameters.get_parameters_from_file(dir_path + "/topology_param-distrib-2.csv"), plot_graph=False)
-# distribution_graph(dir_path + "/topology_param-distrib-2.csv", output_file="distribution-2-tags.pdf")
+distribution_graph(dir_path + "/topology_param-distrib-2.csv", output_file="distribution-2-tags.pdf")
 # slotframe_length_bars(dir_path + "/topology_param-distrib-1.csv", output_file="slotframe_length_bars_distrib_1.pdf", title="", savefig=True)
 # slotframe_length_bars(dir_path + "/topology_param-distrib-2.csv", output_file="slotframe_length_bars_distrib_2.pdf", title="", savefig=True)

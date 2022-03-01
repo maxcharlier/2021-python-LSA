@@ -203,6 +203,7 @@ def gen_topology(parameters, plot_graph=True, repeat=1):
           selected_nodes.append(anchors[math.floor(len(anchors)/2)])
           topology_.set_sink(node)
           node.set_as_sink(True)
+          print(selected_nodes)
           for node in selected_nodes:
             topology_.set_sink(node)
             node.set_as_sink(True)

@@ -130,6 +130,10 @@ def plot_transmissions_repartion(param_best, param_worst, output_file="plot_tran
   plt.xlabel('Network size')
   plt.ylabel('Number of transmissions')
   plt.legend()
+  current_values = plt.gca().get_yticks()
+  plt.gca().set_yticklabels(['{:,.0f}'.format(x) for x in current_values])
+
+  #ax.yaxis.set_major_formatter(matplotlib.mpl.ticker.StrMethodFormatter('{#,###'))
   if savefig:
     plt.savefig(output_file)
     plt.close()
@@ -272,6 +276,9 @@ def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_
   if yticks !=None:
     plt.yticks(yticks)
 
+  current_values = ax1.get_yticks()
+  ax1.set_yticklabels(['{:,.0f}'.format(x) for x in current_values])
+
   if(timeslot_duration != 0):
     #generate second axis
     ax2 = ax1.twinx()
@@ -282,6 +289,7 @@ def slot_frame_length_graph(input_params, curves_names, output_file="slot_frame_
     # ax1.set_ylim(0, mx)
     ax2.set_ylim(mn*factor, mx*factor)
     ax2.set_ylabel("Slotframe duration (s) at 6.8 Mb/s")
+
 
 
   # plt.show()
@@ -654,8 +662,12 @@ def slotframe_length_bars(input_csv_file, output_file="slotframe_length_bars.pdf
   """Generate plot graph based on the schedule stat
   param timeslot_duration is in ms for a bit-rate of 6.8 mbps
   """
-  fig, ax = plt.subplots()
+  # Latex style
+  matplotlib.rc('text', usetex=True)
+  matplotlib.rc('font', family='serif')
+  matplotlib.rcParams.update({'font.size': 12})
 
+  fig, ax = plt.subplots()
   bar_x = []
   bar_height = []
   bar_tick_label = []
@@ -682,7 +694,7 @@ def slotframe_length_bars(input_csv_file, output_file="slotframe_length_bars.pdf
       height = rect.get_height()
       if height > (max(bar_height) / 4):
         ax.text(rect.get_x() + rect.get_width()/2., .3*height,
-                bar_in_label[idx],
+                '{:,.0f}'.format(bar_in_label[idx]),
                 ha='center', va='top', rotation=90)
       else:
         ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
@@ -725,6 +737,9 @@ def slotframe_length_bars(input_csv_file, output_file="slotframe_length_bars.pdf
       labelbottom='off') # labels along the bottom edge are off
 
   plt.ylim(0,max(bar_height))
+
+  current_values = ax.get_yticks()
+  ax.set_yticklabels(['{:,.0f}'.format(x) for x in current_values])
 
   plt.ylabel('Slotframe length')
   plt.title(title)

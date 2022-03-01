@@ -6,4 +6,4 @@ x,y,space,comm_range,disruption_range,R,nb_tag_loc,sink_allocation,nb_sink,nb_ch
 20,20,1,1.5,2,1,1,best,5,8,1,./result/ch8-agr1-sink5-dist-13.5/,13.5,"Ch8,A1,S5"
 20,20,1,1.5,2,1,1,best,9,8,1,./result/ch8-agr1-sink9-dist-13.5/,13.5,"Ch8,A1,S9"
 20,20,1,1.5,2,1,1,best,18,8,1,./result/ch8-agr1-sink18-dist-13.5/,13.5,"Ch8,A1,S18"
-20,20,1,1.5,2,1,1,all,441,8,1,./result/ch8-agr1-sink441-dist-13.5/,13.5,"Ch8,A1,SAll"
+20,20,1,1.5,2,1,1,all,441,8,1,./result/ch8-agr1-sink440-dist-13.5/,13.5,"Ch8,A1,SAll"

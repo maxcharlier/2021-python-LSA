@@ -57,7 +57,12 @@ def bar_graph(input_csv_file, disruption_distances, output_file="channel_reuse.p
     max_height = max(bar_height)
     for idx,rect in enumerate(bar_plot):
       height = rect.get_height()
-      ax.text(rect.get_x() + rect.get_width()/2.,max_height/20,
+      if bar_label[idx]> 100:
+        ax.text(rect.get_x() + rect.get_width()/2.,max_height/40,
+                '{:,.0f}'.format(bar_label[idx]),
+                ha='center', va='bottom', rotation=90)
+      else:
+        ax.text(rect.get_x() + rect.get_width()/2.,max_height/22,
                 bar_label[idx],
                 ha='center', va='bottom', rotation=90)
 
@@ -70,6 +75,9 @@ def bar_graph(input_csv_file, disruption_distances, output_file="channel_reuse.p
   else:
     ax.set_ylabel('Slotframe length')
 
+  #change y ticks value to add a commat to big numbers
+  current_values = ax.get_yticks()
+  ax.set_yticklabels(['{:,.0f}'.format(x) for x in current_values])
 
   #set a fixed legends
   if plot_legend:

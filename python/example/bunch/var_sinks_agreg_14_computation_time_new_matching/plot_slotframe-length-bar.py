@@ -55,7 +55,7 @@ def slotframe_length_bars_aggreg(input_csv_file_ag1,input_csv_file_ag14, \
       height = rect.get_height()
       if height > (max_y_value / 4):
         ax.text(rect.get_x() + rect.get_width()/2., .3*height,
-                '{:,.0f}'.format(label[idx]),
+                label[idx],
                 ha='center', va='top', rotation=90)
       else:
         ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
@@ -91,8 +91,6 @@ def slotframe_length_bars_aggreg(input_csv_file_ag1,input_csv_file_ag14, \
   if title != '':
     plt.title(title)
 
-  current_values = ax.get_yticks()
-  ax.set_yticklabels(['{:,.0f}'.format(x) for x in current_values])
 
   if(timeslot_duration != 0):
     #generate second axis
@@ -113,6 +111,7 @@ def slotframe_length_bars_aggreg(input_csv_file_ag1,input_csv_file_ag14, \
   else:
     plt.show()
 
-
+gen_topology(Bunch_Parameters.get_parameters_from_file(dir_path + "/topology_param_var_sinks_agreg1.csv"), plot_graph=False)
+gen_topology(Bunch_Parameters.get_parameters_from_file(dir_path + "/topology_param_var_sinks_agreg14.csv"), plot_graph=False)
 slotframe_length_bars_aggreg(dir_path + "/topology_param_var_sinks_agreg1.csv", dir_path + "/topology_param_var_sinks_agreg14.csv", \
           output_file="schedule_length_bars_sinks_agreg.pdf", title="", savefig=True, timeslot_duration=5)
